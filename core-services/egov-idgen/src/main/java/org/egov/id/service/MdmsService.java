@@ -4,8 +4,9 @@ import java.io.IOException;
 import java.util.*;
 
 import lombok.extern.log4j.Log4j2;
+
+import org.egov.common.contract.request.RequestInfo;
 import org.egov.id.model.IdRequest;
-import org.egov.id.model.RequestInfo;
 import org.egov.mdms.model.MasterDetail;
 import org.egov.mdms.model.MdmsCriteria;
 import org.egov.mdms.model.MdmsCriteriaReq;
@@ -43,9 +44,9 @@ public class MdmsService {
 
         MdmsResponse mdmsResponse = null;
         try {
-            mdmsResponse = mdmsClientService.getMaster(RequestInfo.toCommonRequestInfo(requestInfo), tenantId,
+            mdmsResponse = mdmsClientService.getMaster(requestInfo, tenantId,
                     masterDetails);
-        } catch (IOException e) {
+        } catch (Exception e) {
             // TODO Auto-generated catch block
             log.error("Error occurred while fetching MDMS data", e);
         }

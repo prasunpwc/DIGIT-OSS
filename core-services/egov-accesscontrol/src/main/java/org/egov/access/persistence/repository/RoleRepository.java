@@ -32,7 +32,7 @@ import com.jayway.jsonpath.JsonPath;
 
 
 
-@Repository
+@Repository("accessRleRepository")
 public class RoleRepository {
 
 	public static final Logger LOGGER = LoggerFactory.getLogger(RoleRepository.class);

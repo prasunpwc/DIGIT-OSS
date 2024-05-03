@@ -6,52 +6,53 @@ import org.egov.domain.model.Tenant;
 import org.egov.domain.service.MessageService;
 import org.egov.web.contract.*;
 import org.egov.web.exception.InvalidMessageRequest;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import javax.validation.constraints.Size;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-@RestController
+//@RestController
 @Validated
-@RequestMapping("/messages")
+//@RequestMapping("/messages")
+@Component
 public class MessageController {
 
+	@Autowired
 	private MessageService messageService;
 
-	public MessageController(MessageService messageService) {
-		this.messageService = messageService;
-	}
+//	public MessageController(MessageService messageService) {
+//		this.messageService = messageService;
+//	}
 
-	@GetMapping()
+//	@GetMapping()
 	public MessagesResponse getMessagesForLocale(@RequestParam("locale") String locale,
 			@RequestParam(value = "module", required = false) String module,
 			@RequestParam("tenantId") String tenantId,@RequestParam(value = "codes",required = false) Set<String> codes) {
 		return getMessages(locale, module, tenantId, codes);
 	}
 
-	@PostMapping("/v1/_search")
-	public MessagesResponse getMessages(@RequestParam("locale") String locale,
-			@RequestParam(value = "module", required = false)  String module,
-			@RequestParam("tenantId") @Size(max = 256) String tenantId,@RequestParam(value = "codes",required = false) Set<String> codes) {
+//	@PostMapping("/v1/_search")
+	public MessagesResponse getMessages(String locale, String module, String tenantId, Set<String> codes) {
 		final MessageSearchCriteria searchCriteria = MessageSearchCriteria.builder().locale(locale)
 				.tenantId(new Tenant(tenantId)).codes(codes).module(module).build();
 		List<org.egov.domain.model.Message> domainMessages = messageService.getFilteredMessages(searchCriteria);
 		return createResponse(domainMessages);
 	}
 	
-	@PostMapping("/v2/_search")
-	public MessagesResponse getMessages(@RequestBody MessageRequest messageRequest) {
+//	@PostMapping("/v2/_search")
+	public MessagesResponse getMessages(MessageRequest messageRequest) {
 		
 		List<org.egov.domain.model.Message> domainMessages = messageService.getFilteredMessages(messageRequest.getMessageSearchCriteria());
 		return createResponse(domainMessages);
 	}
 
-	@PostMapping("/v1/_upsert")
+//	@PostMapping("/v1/_upsert")
 	public MessagesResponse upsertMessages(@Valid @RequestBody CreateMessagesRequest messageRequest,
 			BindingResult bindingResult) {
 
@@ -63,7 +64,7 @@ public class MessageController {
 		return createResponse(messages);
 	}
 
-	@PostMapping("/v1/_create")
+//	@PostMapping("/v1/_create")
 	public MessagesResponse createMessages(@Valid @RequestBody CreateMessagesRequest messageRequest,
 			BindingResult bindingResult) {
 
@@ -75,7 +76,7 @@ public class MessageController {
 		return createResponse(messages);
 	}
 
-	@PostMapping("/cache-bust")
+//	@PostMapping("/cache-bust")
 	public CacheBustResponse clearMessagesCache() {
 		messageService.bustCache();
 		return new CacheBustResponse(null, true);
@@ -85,7 +86,7 @@ public class MessageController {
 		return new MessagesResponse(domainMessages.stream().map(Message::new).collect(Collectors.toList()));
 	}
 
-	@PostMapping(value = "/v1/_update")
+//	@PostMapping(value = "/v1/_update")
 	public MessagesResponse update(@RequestBody @Valid final UpdateMessageRequest messageRequest,
 			final BindingResult bindingResult) {
 		if (bindingResult.hasErrors()) {
@@ -97,7 +98,7 @@ public class MessageController {
 		return createResponse(messages);
 	}
 
-	@PostMapping(value = "/v1/_delete")
+//	@PostMapping(value = "/v1/_delete")
 	public DeleteMessagesResponse delete(@RequestBody @Valid final DeleteMessagesRequest deleteMessagesRequest,
 			final BindingResult bindingResult) {
 		if (bindingResult.hasErrors()) {

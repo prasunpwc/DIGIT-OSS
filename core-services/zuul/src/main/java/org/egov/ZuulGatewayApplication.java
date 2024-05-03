@@ -42,10 +42,10 @@ public class ZuulGatewayApplication {
     @Autowired
     CacheManager cacheManager;
 
-    @PostConstruct
-    public void evictUserCaches() {
-        cacheManager.getCache("systemUser").clear();
-    }
+//    @PostConstruct
+//    public void evictUserCaches() {
+//        cacheManager.getCache("systemUser").clear();
+//    }
 
 
     @Value("${egov.user-info-header}")
@@ -63,8 +63,8 @@ public class ZuulGatewayApplication {
     @Value("${egov.auth-service-uri}")
     private String authServiceUri;
 
-    @Value("${egov.authorize.access.control.host}${egov.authorize.access.control.uri}")
-    private String authorizationUrl;
+//    @Value("${egov.authorize.access.control.host}${egov.authorize.access.control.uri}")
+//    private String authorizationUrl;
 
     @Autowired
     private RestTemplate restTemplate;
@@ -92,7 +92,7 @@ public class ZuulGatewayApplication {
 
     @Bean
     public RbacFilter rbacFilter() {
-        return new RbacFilter(restTemplate, authorizationUrl, objectMapper);
+        return new RbacFilter(restTemplate, objectMapper);
     }
 
     @Bean

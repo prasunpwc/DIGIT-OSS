@@ -1,6 +1,7 @@
 package org.egov.wf.service;
 
 import org.egov.common.contract.request.RequestInfo;
+import org.egov.infra.persist.consumer.PersisterMessageListener;
 import org.egov.wf.config.WorkflowConfig;
 import org.egov.wf.producer.Producer;
 import org.egov.wf.repository.EscalationRepository;
@@ -10,6 +11,7 @@ import org.egov.wf.web.models.EscalationSearchCriteria;
 import org.egov.wf.web.models.ProcessInstance;
 import org.egov.wf.web.models.ProcessInstanceRequest;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Service;
 
 import java.util.LinkedList;
@@ -29,18 +31,22 @@ public class EscalationService {
 
     private WorkflowService workflowService;
 
-    private Producer producer;
+//    private Producer producer;
 
     private WorkflowConfig config;
+    
+    @Autowired
+    private PersisterMessageListener persister;
+    
 
     @Autowired
     public EscalationService(EscalationUtil escalationUtil, MDMSService mdmsService, EscalationRepository escalationRepository,
-                             WorkflowService workflowService, Producer producer, WorkflowConfig config) {
+                             WorkflowService workflowService,  WorkflowConfig config) {
         this.escalationUtil = escalationUtil;
         this.mdmsService = mdmsService;
         this.escalationRepository = escalationRepository;
         this.workflowService = workflowService;
-        this.producer = producer;
+//        this.producer = producer;
         this.config = config;
     }
 
@@ -51,7 +57,7 @@ public class EscalationService {
      * @param requestInfo
      * @param businessService
      */
-    public void escalateApplications(RequestInfo requestInfo, String businessService){
+    public void escalateApplications(RequestInfo requestInfo, String businessService, HttpHeaders headers){
 
         Object mdmsData = mdmsService.mDMSCall(requestInfo);
         List<Escalation> escalations = escalationUtil.getEscalationsFromConfig(businessService, mdmsData);
@@ -59,7 +65,7 @@ public class EscalationService {
 
         for(Escalation escalation : escalations){
 
-            processEscalation(requestInfo, escalation, tenantIds);
+            processEscalation(requestInfo, escalation, tenantIds, headers);
 
         }
 
@@ -71,7 +77,7 @@ public class EscalationService {
      * @param escalation
      * @param tenantIds
      */
-    private void processEscalation(RequestInfo requestInfo, Escalation escalation, List<String> tenantIds){
+    private void processEscalation(RequestInfo requestInfo, Escalation escalation, List<String> tenantIds, HttpHeaders headers){
 
         for(String tenantId: tenantIds){
 
@@ -99,7 +105,10 @@ public class EscalationService {
 
                 List<ProcessInstance> processInstances = escalationUtil.getProcessInstances(tenantId, businessIds.subList(start,end), escalation);
                 processInstances = workflowService.transition(new ProcessInstanceRequest(requestInfo, processInstances));
-                producer.push(escalation.getTopic(),new ProcessInstanceRequest(requestInfo, processInstances));
+//                producer.push(escalation.getTopic(),new ProcessInstanceRequest(requestInfo, processInstances));
+                
+                persister.persist(escalation.getTopic(),new ProcessInstanceRequest(requestInfo, processInstances));
+
 
             }
 

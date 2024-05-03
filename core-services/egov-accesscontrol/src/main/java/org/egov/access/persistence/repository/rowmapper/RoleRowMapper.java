@@ -7,7 +7,7 @@ import org.springframework.stereotype.Component;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-@Component
+@Component("accessRoleRowMapper")
 public class RoleRowMapper implements RowMapper<Role> {
 
 	@Override

@@ -17,7 +17,7 @@ import static org.egov.user.config.UserServiceConstants.EMAIL_UPDATION_CODE;
 
 
 @Slf4j
-@Component
+@Component("userNotificationUtil")
 public class NotificationUtil {
 
     @Autowired
@@ -25,11 +25,11 @@ public class NotificationUtil {
     @Autowired
     private LocalizationUtil localizationUtil;
 
-    @Value("${kafka.topics.notification.mail.name}")
-    public String emailNotificationTopic;
+//    @Value("${kafka.topics.notification.mail.name}")
+//    public String emailNotificationTopic;
 
-    @Value("${kafka.topics.notification.sms.topic.name}")
-    public String smsNotificationTopic;
+//    @Value("${kafka.topics.notification.sms.topic.name}")
+//    public String smsNotificationTopic;
 
     public void sendEmail(RequestInfo requestInfo, User existingUser, User updatedUser) {
         String oldEmail = existingUser.getEmailId();
@@ -52,8 +52,8 @@ public class NotificationUtil {
         smsRequest.setMessage(emailUpdationMessage);
 
         EmailRequest emailRequest = EmailRequest.builder().requestInfo(requestInfo).email(email).build();
-        kafkaTemplate.send(emailNotificationTopic,emailRequest);
-        kafkaTemplate.send(smsNotificationTopic,smsRequest);
+//        kafkaTemplate.send(emailNotificationTopic,emailRequest);
+//        kafkaTemplate.send(smsNotificationTopic,smsRequest);
     }
 
 }

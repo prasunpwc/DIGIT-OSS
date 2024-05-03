@@ -1,5 +1,7 @@
 package org.egov.id.model;
 
+import org.egov.common.contract.request.RequestInfo;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

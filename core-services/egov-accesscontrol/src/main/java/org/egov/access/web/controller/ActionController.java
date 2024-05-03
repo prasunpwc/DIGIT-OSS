@@ -21,6 +21,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Component;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -34,8 +35,9 @@ import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
 
-@RestController
-@RequestMapping("/v1/actions")
+//@RestController
+//@RequestMapping("/v1/actions")
+@Component
 public class ActionController {
 
 	private static final Logger logger = LoggerFactory.getLogger(ActionController.class);
@@ -54,7 +56,7 @@ public class ActionController {
 		return getSuccessResponse(actionsList);
 	}*/
 	
-	@PostMapping(value = "_search")
+//	@PostMapping(value = "_search")
 	public ActionResponse getActionsBasedOnRoles(@RequestBody @Valid final ActionRequest actionRequest) throws UnsupportedEncodingException, JSONException {
 		List<Action> actionsList = actionService.getAllMDMSActions(actionRequest);
 		return getSuccessResponse(actionsList);
@@ -107,14 +109,14 @@ public class ActionController {
 		return getValidateActionResponse(actionValidation);
 	}
 
-	@PostMapping(value = "_authorize")
-	public ResponseEntity<Void> authorize(@RequestBody @Valid AuthorizationRequestWrapper authorizationRequestWrapper) {
+//	@PostMapping(value = "_authorize")
+	public Boolean authorize(@Valid AuthorizationRequestWrapper authorizationRequestWrapper) {
 		boolean authorized = actionService.isAuthorized(authorizationRequestWrapper.getAuthorizationRequest());
 
 		if(authorized)
-			return new ResponseEntity<>(HttpStatus.OK);
+			return Boolean.TRUE;
 		else
-			return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+			return Boolean.FALSE;
 	}
 
 	private ResponseEntity<?> getListSuccessResponse(final RequestInfo requestInfo, final List<Module> moduleList) {

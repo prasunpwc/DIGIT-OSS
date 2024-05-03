@@ -1,21 +1,16 @@
 package org.egov.web.notification.sms.controller;
 
 
-import org.egov.hash.HashService;
-import org.egov.web.notification.sms.config.Producer;
+import java.util.regex.Pattern;
+
 import org.egov.web.notification.sms.models.Report;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.*;
-
-import java.text.ParseException;
-import java.text.ParsePosition;
-import java.text.SimpleDateFormat;
-import java.util.regex.*;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 
 @Service
 @Controller
@@ -23,14 +18,14 @@ import java.util.regex.*;
 public class CallbackAPI {
 
 
-    @Autowired
-    Producer producer;
+//    @Autowired
+//    Producer producer;
 
-    @Autowired
-    HashService hashService;
+//    @Autowired
+//    HashService hashService;
 
-    @Value("${kafka.topics.sms.bounce}")
-    private String topic;
+//    @Value("${kafka.topics.sms.bounce}")
+//    private String topic;
 
     @RequestMapping(method = { RequestMethod.GET, RequestMethod.POST })
     public ResponseEntity postStatus(@RequestParam String userId,
@@ -59,9 +54,9 @@ public class CallbackAPI {
         report.setJobno(jobno);
         report.setMessagestatus(status);
         report.setDoneTime(DoneTime);
-        report.setUsernameHash(hashService.getHashValue(mobilenumber));
+        report.setUsernameHash(mobilenumber);
 
-        producer.push(topic, report);
+//        producer.push(topic, report);
         return ResponseEntity.ok().body("Status successfully sent");
     }
 }

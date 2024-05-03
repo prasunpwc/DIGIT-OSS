@@ -2,13 +2,18 @@ package org.egov.pgr.repository;
 
 
 import org.egov.common.contract.request.RequestInfo;
+import org.egov.id.api.IdGeneration;
+import org.egov.id.model.IdGenerationRequest;
+import org.egov.id.model.IdGenerationResponse;
+import org.egov.id.model.IdRequest;
 import org.egov.pgr.config.PGRConfiguration;
-import org.egov.pgr.web.models.Idgen.IdGenerationRequest;
-import org.egov.pgr.web.models.Idgen.IdGenerationResponse;
-import org.egov.pgr.web.models.Idgen.IdRequest;
+//import org.egov.pgr.web.models.Idgen.IdGenerationRequest;
+//import org.egov.pgr.web.models.Idgen.IdGenerationResponse;
+//import org.egov.pgr.web.models.Idgen.IdRequest;
 import org.egov.tracer.model.CustomException;
 import org.egov.tracer.model.ServiceCallException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Repository;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
@@ -26,6 +31,10 @@ public class IdGenRepository {
     private RestTemplate restTemplate;
 
     private PGRConfiguration config;
+    
+    @Autowired
+    @Lazy
+    private IdGeneration idGeneration;
 
     @Autowired
     public IdGenRepository(RestTemplate restTemplate, PGRConfiguration config) {
@@ -52,7 +61,8 @@ public class IdGenRepository {
         IdGenerationRequest req = IdGenerationRequest.builder().idRequests(reqList).requestInfo(requestInfo).build();
         IdGenerationResponse response = null;
         try {
-            response = restTemplate.postForObject( config.getIdGenHost()+ config.getIdGenPath(), req, IdGenerationResponse.class);
+//            response = restTemplate.postForObject( config.getIdGenHost()+ config.getIdGenPath(), req, IdGenerationResponse.class);
+        	response = idGeneration.generateIdResponse(req);
         } catch (HttpClientErrorException e) {
             throw new ServiceCallException(e.getResponseBodyAsString());
         } catch (Exception e) {

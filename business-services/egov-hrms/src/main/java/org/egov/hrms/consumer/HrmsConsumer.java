@@ -7,6 +7,7 @@ import org.egov.hrms.config.PropertiesManager;
 import org.egov.hrms.producer.HRMSProducer;
 import org.egov.hrms.service.NotificationService;
 import org.egov.hrms.web.contract.EmployeeRequest;
+import org.egov.infra.persist.consumer.PersisterMessageListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.kafka.annotation.KafkaListener;
@@ -31,12 +32,18 @@ public class HrmsConsumer {
 
     @Autowired
     private PropertiesManager propertiesManager;
+    
+    @Autowired
+    private PersisterMessageListener persister;
 
-    @KafkaListener(topics = {"${kafka.topics.hrms.updateData}"})
+//    @KafkaListener(topics = {"${kafka.topics.hrms.updateData}"})
     public void listenUpdateEmployeeData(final HashMap<String, Object> record,@Header(KafkaHeaders.RECEIVED_TOPIC) String topic) {
         try {
             EmployeeRequest employeeRequest = mapper.convertValue(record, EmployeeRequest.class);
-            hrmsProducer.push(propertiesManager.getUpdateEmployeeTopic(), employeeRequest);
+//            hrmsProducer.push(propertiesManager.getUpdateEmployeeTopic(), employeeRequest);
+
+            persister.persist(propertiesManager.getUpdateEmployeeTopic(), employeeRequest);
+
             notificationService.sendReactivationNotification(employeeRequest);
         } catch (final Exception e) {
 

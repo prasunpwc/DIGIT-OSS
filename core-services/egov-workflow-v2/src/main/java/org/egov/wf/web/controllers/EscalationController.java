@@ -6,6 +6,7 @@ import org.egov.wf.service.EscalationService;
 import org.egov.wf.util.ResponseInfoFactory;
 import org.egov.wf.web.models.RequestInfoWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -21,13 +22,13 @@ public class EscalationController {
 
     private EscalationService escalationService;
 
-    private ResponseInfoFactory responseInfoFactory;
+    private ResponseInfoFactory wfResponseInfoFactory;
 
 
     @Autowired
     public EscalationController(EscalationService escalationService, ResponseInfoFactory responseInfoFactory) {
         this.escalationService = escalationService;
-        this.responseInfoFactory = responseInfoFactory;
+        this.wfResponseInfoFactory = responseInfoFactory;
     }
 
     /**
@@ -38,9 +39,9 @@ public class EscalationController {
      */
     @RequestMapping(value="/auto/{businessService}/_escalate", method = RequestMethod.POST)
     public ResponseEntity<ResponseInfo> processTransition(@Valid @RequestBody RequestInfoWrapper requestInfoWrapper,
-                                                                     @PathVariable(required = true) String businessService) {
-        escalationService.escalateApplications(requestInfoWrapper.getRequestInfo(), businessService);
-        ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(requestInfoWrapper.getRequestInfo(), true);
+                                                                     @PathVariable(required = true) String businessService, HttpHeaders headers) {
+        escalationService.escalateApplications(requestInfoWrapper.getRequestInfo(), businessService, headers);
+        ResponseInfo responseInfo = wfResponseInfoFactory.createResponseInfoFromRequestInfo(requestInfoWrapper.getRequestInfo(), true);
         return new ResponseEntity<>(responseInfo, HttpStatus.OK);
     }
 
@@ -54,7 +55,7 @@ public class EscalationController {
     public ResponseEntity<List> processTransitionTest(@Valid @RequestBody RequestInfoWrapper requestInfoWrapper,
                                                           @PathVariable(required = true) String businessService) {
         List<String> ids = escalationService.escalateApplicationsTest(requestInfoWrapper.getRequestInfo(), businessService);
-        ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(requestInfoWrapper.getRequestInfo(), true);
+        ResponseInfo responseInfo = wfResponseInfoFactory.createResponseInfoFromRequestInfo(requestInfoWrapper.getRequestInfo(), true);
         return new ResponseEntity<>(ids, HttpStatus.OK);
     }
 

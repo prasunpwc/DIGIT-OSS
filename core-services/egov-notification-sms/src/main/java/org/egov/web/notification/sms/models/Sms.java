@@ -1,10 +1,12 @@
 package org.egov.web.notification.sms.models;
 
-import lombok.*;
-
 import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 
-import static org.apache.commons.lang3.StringUtils.isNotEmpty;
+import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 
 @Getter
 @AllArgsConstructor

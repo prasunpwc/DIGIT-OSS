@@ -44,7 +44,7 @@ import lombok.*;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-@Component
+@Component(value = "hrmPropertiesManager")
 @Getter
 @Setter
 @NoArgsConstructor
@@ -71,17 +71,17 @@ public class PropertiesManager {
 	@Value("${egov.user.update.endpoint}")
 	public String userUpdateEndpoint;
 
-	@Value("${egov.localization.host}")
-	public String localizationHost;
+//	@Value("${egov.localization.host}")
+//	public String localizationHost;
 	
-	@Value("${egov.localization.search.endpoint}")
-	public String localizationSearchEndpoint;
+//	@Value("${egov.localization.search.endpoint}")
+//	public String localizationSearchEndpoint;
 	
-	@Value("${egov.idgen.host}")
-	public String idGenHost;
+//	@Value("${egov.idgen.host}")
+//	public String idGenHost;
 	
-	@Value("${egov.idgen.path}")
-	public String idGenEndpoint;
+//	@Value("${egov.idgen.path}")
+//	public String idGenEndpoint;
 	
 	
 	//Kafka Topics

@@ -1,39 +1,31 @@
 package org.egov.web.notification.sms.consumer;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.kafka.clients.consumer.*;
-import org.egov.tracer.kafka.*;
+import java.util.UUID;
+
+import org.egov.tracer.kafka.CustomKafkaTemplate;
 import org.egov.web.notification.sms.consumer.contract.SMSRequest;
 import org.egov.web.notification.sms.models.Category;
 import org.egov.web.notification.sms.models.RequestContext;
 import org.egov.web.notification.sms.service.SMSService;
-import org.springframework.beans.factory.annotation.*;
-import org.springframework.boot.autoconfigure.kafka.*;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.annotation.*;
-import org.springframework.kafka.annotation.*;
-import org.springframework.kafka.config.*;
-import org.springframework.kafka.core.*;
-import org.springframework.kafka.listener.*;
-import org.springframework.kafka.listener.ErrorHandler;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
-import org.springframework.util.*;
+import org.springframework.util.StringUtils;
 import org.springframework.web.client.RestClientException;
 
-import java.util.HashMap;
-import java.util.UUID;
+import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Service
 public class SmsNotificationListener {
 
-    private final ApplicationContext context;
+//    private final ApplicationContext context;
     private SMSService smsService;
     private CustomKafkaTemplate<String, SMSRequest> kafkaTemplate;
 
-    @Autowired
-    private ObjectMapper objectMapper;
+//    @Autowired
+//    private ObjectMapper objectMapper;
 
     @Value("${kafka.topics.expiry.sms}")
     String expiredSmsTopic;
@@ -50,26 +42,28 @@ public class SmsNotificationListener {
 
     @Autowired
     public SmsNotificationListener(
-            ApplicationContext context,
+//            ApplicationContext context,
             SMSService smsService,
                                    CustomKafkaTemplate<String, SMSRequest> kafkaTemplate) {
         this.smsService = smsService;
-        this.context = context;
+//        this.context = context;
         this.kafkaTemplate = kafkaTemplate;
     }
 
-    @KafkaListener(
-            topics = "${kafka.topics.notification.sms.name}"
-    )
-    public void process(HashMap<String, Object> consumerRecord) {
+//    @KafkaListener(
+//            topics = "${kafka.topics.notification.sms.name}"
+//    )
+//    public void process(HashMap<String, Object> consumerRecord) {
+    @Async
+    public void process(SMSRequest request) {
         RequestContext.setId(UUID.randomUUID().toString());
-        SMSRequest request = null;
+//        SMSRequest request = null;
         try {
             if(!smsEnable){
                 log.info("Sms service is disable to enable the notification service set the value of sms.enable flag as true");
             }
             else{
-                request = objectMapper.convertValue(consumerRecord, SMSRequest.class);
+//                request = objectMapper.convertValue(consumerRecord, SMSRequest.class);
                 if (request.getExpiryTime() != null && request.getCategory() == Category.OTP) {
                     Long expiryTime = request.getExpiryTime();
                     Long currentTime = System.currentTimeMillis();

@@ -1,5 +1,6 @@
 package org.egov.id.model;
 
+import org.egov.common.contract.request.RequestInfo;
 import org.springframework.stereotype.Service;
 
 /**
@@ -8,7 +9,7 @@ import org.springframework.stereotype.Service;
  * @author Narendra
  *
  */
-@Service
+@Service("idResponseInfoFactory")
 public class ResponseInfoFactory {
 	public ResponseInfo createResponseInfoFromRequestInfo(RequestInfo requestInfo, Boolean success) {
 		String apiId = requestInfo.getApiId();

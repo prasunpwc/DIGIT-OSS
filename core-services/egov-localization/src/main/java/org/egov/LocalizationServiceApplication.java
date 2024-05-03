@@ -1,6 +1,5 @@
 package org.egov;
 
-import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.egov.tracer.config.TracerConfiguration;
 import org.springframework.beans.factory.annotation.Value;
@@ -9,7 +8,6 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
-import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.web.servlet.config.annotation.ContentNegotiationConfigurer;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 
@@ -44,13 +42,13 @@ public class LocalizationServiceApplication {
 		return new ObjectMapper();
 	}
 
-	@Bean
-	public MappingJackson2HttpMessageConverter jacksonConverter(ObjectMapper objectMapper) {
-		MappingJackson2HttpMessageConverter converter = new MappingJackson2HttpMessageConverter();
-		objectMapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
-		converter.setObjectMapper(objectMapper);
-		return converter;
-	}
+//	@Bean
+//	public MappingJackson2HttpMessageConverter jacksonConverter(ObjectMapper objectMapper) {
+//		MappingJackson2HttpMessageConverter converter = new MappingJackson2HttpMessageConverter();
+//		objectMapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
+//		converter.setObjectMapper(objectMapper);
+//		return converter;
+//	}
 
 	public static void main(String[] args) {
 		SpringApplication.run(LocalizationServiceApplication.class, args);

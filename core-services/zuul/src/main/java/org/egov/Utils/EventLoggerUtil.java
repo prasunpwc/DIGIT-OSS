@@ -2,6 +2,7 @@ package org.egov.Utils;
 
 import com.netflix.zuul.context.RequestContext;
 import lombok.extern.slf4j.Slf4j;
+
 import org.egov.model.EventLogRequest;
 import org.egov.model.RequestCaptureCriteria;
 import org.egov.producer.Producer;
@@ -14,8 +15,8 @@ import javax.annotation.PostConstruct;
 @Component
 @Slf4j
 public class EventLoggerUtil {
-    @Autowired
-    Producer producer;
+//    @Autowired
+//    Producer producer;
 
     @Value("${eventlog.captureInputBody:false}")
     private boolean captureInputBody;
@@ -40,7 +41,11 @@ public class EventLoggerUtil {
     public Object logCurrentRequest(String topic){
         try {
             EventLogRequest request = EventLogRequest.fromRequestContext(RequestContext.getCurrentContext(), criteria);
-            producer.push(topic, request);
+//            producer.push(topic, request);
+            
+//            PersisterMessageListener persister = new PersisterMessageListener();
+//            persister.persist(topic, request);
+
         } catch (Exception ex) {
             log.error("event logger", ex);
         }

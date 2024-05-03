@@ -7,11 +7,15 @@ import com.netflix.zuul.context.RequestContext;
 import lombok.extern.slf4j.Slf4j;
 import org.egov.Utils.ExceptionUtils;
 import org.egov.Utils.Utils;
+import org.egov.access.domain.model.authorize.AuthorizationRequest;
+import org.egov.access.domain.model.authorize.AuthorizationRequestWrapper;
+import org.egov.access.domain.model.authorize.Role;
+import org.egov.access.web.controller.ActionController;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.contract.User;
 import org.egov.exceptions.CustomException;
-import org.egov.model.AuthorizationRequest;
-import org.egov.model.AuthorizationRequestWrapper;
+//import org.egov.model.AuthorizationRequest;
+//import org.egov.model.AuthorizationRequestWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,6 +25,7 @@ import org.springframework.web.client.RestTemplate;
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static java.util.Objects.isNull;
 import static org.egov.constants.RequestContextConstants.*;
@@ -39,6 +44,9 @@ public class RbacFilter extends ZuulFilter {
     private String authorizationUrl;
 
     private ObjectMapper objectMapper;
+    
+    @Autowired
+    private ActionController actionController;
 
 
     @Autowired
@@ -46,8 +54,16 @@ public class RbacFilter extends ZuulFilter {
         this.restTemplate = restTemplate;
         this.authorizationUrl = authorizationUrl;
         this.objectMapper = objectMapper;
+//        this.actionController = actionController;
     }
 
+    //CHANGE: Light Weigt Digit
+    @Autowired
+    public RbacFilter(RestTemplate restTemplate, ObjectMapper objectMapper) {
+        this.restTemplate = restTemplate;
+        this.objectMapper = objectMapper;
+    }
+    
     @Override
     public String filterType() {
         return "pre";
@@ -88,7 +104,7 @@ public class RbacFilter extends ZuulFilter {
         ctx.set(CURRENT_REQUEST_TENANTID, String.join(",", tenantId));
 
         AuthorizationRequest request = AuthorizationRequest.builder()
-            .roles(new HashSet<>(user.getRoles()))
+            .roles(user.getRoles().stream().map(role -> Role.builder().id(role.getId()).code(role.getCode()).name(role.getName()).tenantId(role.getTenantId()).build()).collect(Collectors.toSet()))
             .uri(requestUri)
             .tenantIds(tenantId)
             .build();
@@ -168,14 +184,16 @@ public class RbacFilter extends ZuulFilter {
     }
 
     private boolean isUriAuthorized(AuthorizationRequest authorizationRequest) {
+    	AuthorizationRequestWrapper.builder().requestInfo(new RequestInfo()).authorizationRequest(authorizationRequest).build();
         AuthorizationRequestWrapper authorizationRequestWrapper = new AuthorizationRequestWrapper(new RequestInfo(),
             authorizationRequest);
 
         try {
-            ResponseEntity<Void> responseEntity = restTemplate.postForEntity(authorizationUrl, authorizationRequestWrapper, Void
-                .class);
-
-            return responseEntity.getStatusCode().equals(HttpStatus.OK);
+//            ResponseEntity<Void> responseEntity = restTemplate.postForEntity(authorizationUrl, authorizationRequestWrapper, Void
+//                .class);
+//
+//            return responseEntity.getStatusCode().equals(HttpStatus.OK);
+        	return actionController.authorize(authorizationRequestWrapper);
         } catch (HttpClientErrorException e) {
             log.warn("Exception while attempting to authorize via access control", e);
             return false;

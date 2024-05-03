@@ -3,6 +3,7 @@ package org.egov.hrms.service;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
 import org.egov.common.contract.request.RequestInfo;
@@ -13,6 +14,8 @@ import org.egov.hrms.repository.RestCallRepository;
 import org.egov.hrms.utils.HRMSConstants;
 import org.egov.hrms.web.contract.EmployeeRequest;
 import org.egov.hrms.web.contract.RequestInfoWrapper;
+import org.egov.web.contract.MessagesResponse;
+import org.egov.web.controller.MessageController;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -22,7 +25,7 @@ import com.jayway.jsonpath.JsonPath;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.client.RestTemplate;
 
-@Service
+@Service("hrmNotificationService")
 @Slf4j
 public class NotificationService {
 	
@@ -41,17 +44,17 @@ public class NotificationService {
     @Value("${egov.hrms.employee.app.link}")
     private String appLink;
     
-	@Value("${egov.localization.host}")
-	private String localizationHost;
+//	@Value("${egov.localization.host}")
+//	private String localizationHost;
 
-	@Value("${egov.localization.search.endpoint}")
-	private String localizationSearchEndpoint;
+//	@Value("${egov.localization.search.endpoint}")
+//	private String localizationSearchEndpoint;
 
-	@Value("${egov.otp.host}")
-	private String otpHost;
+//	@Value("${egov.otp.host}")
+//	private String otpHost;
 
-	@Value("${egov.otp.create.endpoint}")
-	private String otpCreateEndpoint;
+//	@Value("${egov.otp.create.endpoint}")
+//	private String otpCreateEndpoint;
 
 	@Value("${egov.environment.domain}")
 	private String envHost;
@@ -116,7 +119,7 @@ public class NotificationService {
 
 		Object response = null;
 		StringBuilder url = new StringBuilder();
-		url.append(otpHost).append(otpCreateEndpoint);
+//		url.append(otpHost).append(otpCreateEndpoint);
 		try {
 			response = restTemplate.postForObject(url.toString(), OTPRequest, Map.class);
 		}catch(Exception e) {
@@ -167,19 +170,25 @@ public class NotificationService {
 	public Map<String, Map<String, String>> getLocalisedMessages(RequestInfo requestInfo, String tenantId, String locale, String module) {
 		Map<String, Map<String, String>> localizedMessageMap = new HashMap<>();
 		Map<String, String> mapOfCodesAndMessages = new HashMap<>();
-		StringBuilder uri = new StringBuilder();
+//		StringBuilder uri = new StringBuilder();
 		RequestInfoWrapper requestInfoWrapper = new RequestInfoWrapper();
 		requestInfoWrapper.setRequestInfo(requestInfo);
 		tenantId = tenantId.split("\\.")[0];
-		uri.append(localizationHost).append(localizationSearchEndpoint).append("?tenantId=" + tenantId)
-				.append("&module=" + module).append("&locale=" + locale);
+//		uri.append(localizationHost).append(localizationSearchEndpoint).append("?tenantId=" + tenantId)
+//				.append("&module=" + module).append("&locale=" + locale);
 		List<String> codes = null;
 		List<String> messages = null;
 		Object result = null;
 		try {
-			result = repository.fetchResult(uri, requestInfoWrapper);
-			codes = JsonPath.read(result, HRMSConstants.HRMS_LOCALIZATION_CODES_JSONPATH);
-			messages = JsonPath.read(result, HRMSConstants.HRMS_LOCALIZATION_MSGS_JSONPATH);
+//			result = repository.fetchResult(uri, requestInfoWrapper);
+//			codes = JsonPath.read(result, HRMSConstants.HRMS_LOCALIZATION_CODES_JSONPATH);
+//			messages = JsonPath.read(result, HRMSConstants.HRMS_LOCALIZATION_MSGS_JSONPATH);
+			
+			//CHANGE: Changes for Lightweight version
+			MessageController messageController = new MessageController();
+			MessagesResponse response = messageController.getMessages(locale, module, tenantId, null);
+			codes = response.getMessages().stream().map(msg -> msg.getCode()).collect(Collectors.toList());
+			messages = response.getMessages().stream().map(msg -> msg.getMessage()).collect(Collectors.toList());
 		} catch (Exception e) {
 			log.error("Exception while fetching from localization: " + e);
 		}

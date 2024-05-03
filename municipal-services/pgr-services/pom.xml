@@ -107,7 +107,6 @@
         <dependency>
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
-            <version>42.2.2.jre7</version>
         </dependency>
         <dependency>
             <groupId>org.egov</groupId>
@@ -125,6 +124,91 @@
             <artifactId>itext7-core</artifactId>
             <version>7.2.0</version>
             <type>pom</type>
+        </dependency>
+        <dependency>
+        	<groupId>org.egov</groupId>
+        	<artifactId>egov-idgen</artifactId>
+        	<version>1.2.4-SNAPSHOT</version>
+        	<exclusions>
+		    	<exclusion>
+			    	<groupId>org.egov</groupId>
+	            	<artifactId>mdms-client</artifactId>
+            	</exclusion>
+            	<exclusion>
+            		<groupId>org.egov.services</groupId>
+            		<artifactId>services-common</artifactId>
+            	</exclusion>
+		    </exclusions>
+        </dependency>
+        <dependency>
+        	<groupId>org.egov</groupId>
+		    <artifactId>egov-workflow-v2</artifactId>
+		    <version>1.2.2-SNAPSHOT</version>
+		    <exclusions>
+		    	<exclusion>
+			    	<groupId>org.egov</groupId>
+	            	<artifactId>mdms-client</artifactId>
+            	</exclusion>
+            	<exclusion>
+            		<groupId>org.egov.services</groupId>
+            		<artifactId>services-common</artifactId>
+            	</exclusion>
+		    </exclusions>
+        </dependency>
+        <dependency>
+        	<groupId>org.egov</groupId>
+		  	<artifactId>egov-hrms</artifactId>
+		  	<version>1.2.5-SNAPSHOT</version>
+		  	<exclusions>
+		    	<exclusion>
+			    	<groupId>org.egov</groupId>
+	            	<artifactId>mdms-client</artifactId>
+            	</exclusion>
+            	<exclusion>
+            		<groupId>org.egov.services</groupId>
+            		<artifactId>services-common</artifactId>
+            	</exclusion>
+		    </exclusions>
+        </dependency>
+        <dependency>
+        	<groupId>org.egov</groupId>
+  			<artifactId>egov-localization</artifactId>
+  			<version>1.1.4-SNAPSHOT</version>
+  			<exclusions>
+		    	<exclusion>
+			    	<groupId>org.egov</groupId>
+	            	<artifactId>mdms-client</artifactId>
+            	</exclusion>
+            	<exclusion>
+            		<groupId>org.egov.services</groupId>
+            		<artifactId>services-common</artifactId>
+            	</exclusion>
+		    </exclusions>
+        </dependency>
+        <dependency>
+        	<groupId>org.egov</groupId>
+  			<artifactId>egov-url-shortening</artifactId>
+  			<version>1.1.3-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+        	<groupId>org.egov</groupId>
+  			<artifactId>egov-persister</artifactId>
+  			<version>1.1.5-SNAPSHOT</version>
+  			<exclusions>
+		    	<exclusion>
+			    	<groupId>org.egov</groupId>
+	            	<artifactId>mdms-client</artifactId>
+            	</exclusion>
+            	<exclusion>
+            		<groupId>org.egov.services</groupId>
+            		<artifactId>services-common</artifactId>
+            	</exclusion>
+		    </exclusions>
+        </dependency>
+        <dependency>
+        	<groupId>org.egov</groupId>
+    		<artifactId>egov-notification-sms</artifactId>
+    		<version>1.1.4-SNAPSHOT</version>
         </dependency>
     </dependencies>
     <repositories>

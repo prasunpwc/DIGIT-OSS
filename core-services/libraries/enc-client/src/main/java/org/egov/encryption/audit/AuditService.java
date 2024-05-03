@@ -31,7 +31,7 @@ public class AuditService {
         auditObject.setUserId(user.getUuid());
         auditObject.setId(UUID.randomUUID().toString());
 
-        producer.push(encProperties.getAuditTopicName(), auditObject.getId(), objectMapper.valueToTree(auditObject).toString());
+//        producer.push(encProperties.getAuditTopicName(), auditObject.getId(), objectMapper.valueToTree(auditObject).toString());
     }
 
     public void audit(String userId, Long timestamp, String purpose, JsonNode abacParams, JsonNode data) {
@@ -44,7 +44,7 @@ public class AuditService {
         auditObject.set("abacParams", abacParams);
         auditObject.set("data", data);
 
-        producer.push(encProperties.getAuditTopicName(), auditObject.get("id").asText(), auditObject);
+//        producer.push(encProperties.getAuditTopicName(), auditObject.get("id").asText(), auditObject);
     }
 
 }

@@ -25,6 +25,7 @@ import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -34,16 +35,22 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.multipart.MultipartFile;
 
-@Controller
-@RequestMapping("/v1/files")
+//@Controller
+//@RequestMapping("/v1/files")
+@Component
 public class StorageController {
 
+	@Autowired
 	private StorageService storageService;
+	
+	@Autowired
 	private ResponseFactory responseFactory;
+	
+	@Autowired
 	private StorageUtil storageUtil;
 	public static final Logger logger = LoggerFactory.getLogger(StorageController.class);
 	
-	@Autowired
+//	@Autowired
 	public StorageController(StorageService storageService, ResponseFactory responseFactory,
 			StorageUtil storageUtil) {
 		this.storageService = storageService;
@@ -51,6 +58,8 @@ public class StorageController {
 		this.storageUtil = storageUtil;
 		//this.fileStoreConfig = fileStoreConfig;
 	}
+	
+	public StorageController() { }
 
 	@GetMapping("/id")
 	@ResponseBody
@@ -115,14 +124,14 @@ public class StorageController {
 		return new StorageResponse(files);
 	}
 	
-	@GetMapping("/url")
-	@ResponseBody
-	public ResponseEntity<Map<String, Object>> getUrls(@RequestParam(value = "tenantId") String tenantId,
-			@RequestParam("fileStoreIds") List<String> fileStoreIds) {
+//	@GetMapping("/url")
+//	@ResponseBody
+	public Map<String, String> getUrls(String tenantId,
+			List<String> fileStoreIds) {
 		
-		Map<String, Object> responseMap = new HashMap<>();
+		Map<String, String> responseMap = new HashMap<>();
 		if (fileStoreIds.isEmpty())
-			return new ResponseEntity<>(new HashMap<>(), HttpStatus.OK);
+			return new HashMap<>();
 			Map<String, String> maps= storageService.getUrls(tenantId, fileStoreIds);
 			
 		List<FileStoreResponse> responses = new ArrayList<>();
@@ -131,9 +140,9 @@ public class StorageController {
 			responses.add(FileStoreResponse.builder().id(entry.getKey()).url(entry.getValue()).build());
 		}
 		responseMap.putAll(maps);
-		responseMap.put("fileStoreIds", responses);
+//		responseMap.put("fileStoreIds", responses);
 		
-		return new ResponseEntity<>(responseMap, HttpStatus.OK);
+		return responseMap;
 	}
 	
 }

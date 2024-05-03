@@ -46,7 +46,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.Date;
 
-@Component
+@Component("userResponseInfoFactory")
 public class ResponseInfoFactory {
 
     public ResponseInfo createResponseInfoFromRequestInfo(final RequestInfo requestInfo, final Boolean success) {

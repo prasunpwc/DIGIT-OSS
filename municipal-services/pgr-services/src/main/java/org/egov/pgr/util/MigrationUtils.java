@@ -12,9 +12,9 @@ import org.egov.pgr.web.models.RequestInfoWrapper;
 import org.egov.pgr.web.models.User;
 import org.egov.pgr.web.models.user.UserDetailResponse;
 import org.egov.pgr.web.models.user.UserSearchRequest;
-import org.egov.pgr.web.models.workflow.BusinessServiceResponse;
-import org.egov.pgr.web.models.workflow.State;
 import org.egov.tracer.model.CustomException;
+import org.egov.wf.web.models.BusinessServiceResponse;
+import org.egov.wf.web.models.State;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
@@ -137,13 +137,14 @@ public class MigrationUtils {
 
     private StringBuilder getSearchURLWithParams(String tenantId, String businessService) {
 
-        StringBuilder url = new StringBuilder(config.getWfHost());
-        url.append(config.getWfBusinessServiceSearchPath());
-        url.append("?tenantId=");
-        url.append(tenantId);
-        url.append("&businessServices=");
-        url.append(businessService);
-        return url;
+//        StringBuilder url = new StringBuilder(config.getWfHost());
+//        url.append(config.getWfBusinessServiceSearchPath());
+//        url.append("?tenantId=");
+//        url.append(tenantId);
+//        url.append("&businessServices=");
+//        url.append(businessService);
+//        return url;
+        return new StringBuilder("https://dev.js.org");
     }
 
 

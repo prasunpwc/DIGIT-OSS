@@ -1,6 +1,7 @@
 package org.egov.wf.service;
 
 import org.egov.common.contract.request.RequestInfo;
+import org.egov.infra.persist.consumer.PersisterMessageListener;
 import org.egov.wf.config.WorkflowConfig;
 import org.egov.wf.producer.Producer;
 import org.egov.wf.web.models.ProcessInstance;
@@ -16,14 +17,17 @@ import java.util.List;
 @Service
 public class StatusUpdateService {
 
-    private Producer producer;
+//    private Producer producer;
 
     private WorkflowConfig config;
+    
+    @Autowired
+    private PersisterMessageListener persister;
 
 
     @Autowired
-    public StatusUpdateService(Producer producer, WorkflowConfig config) {
-        this.producer = producer;
+    public StatusUpdateService(WorkflowConfig config) {
+//        this.producer = producer;
         this.config = config;
     }
 
@@ -47,7 +51,10 @@ public class StatusUpdateService {
             processInstances.add(processStateAndAction.getProcessInstanceFromRequest());
         });
         ProcessInstanceRequest processInstanceRequest = new ProcessInstanceRequest(requestInfo,processInstances);
-        producer.push(config.getSaveTransitionTopic(),processInstanceRequest);
+//        producer.push(config.getSaveTransitionTopic(),processInstanceRequest);
+        
+        persister.persist(config.getSaveTransitionTopic(),processInstanceRequest);
+
     }
 
 

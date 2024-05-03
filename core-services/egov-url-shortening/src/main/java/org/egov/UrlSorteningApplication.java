@@ -13,8 +13,8 @@ public class UrlSorteningApplication {
 		SpringApplication.run(UrlSorteningApplication.class, args);
 	}
 
-	@Bean
-	public ObjectMapper getObjectMapper() {
-		return new ObjectMapper();
-	}
+//	@Bean
+//	public ObjectMapper getObjectMapper() {
+//		return new ObjectMapper();
+//	}
 }

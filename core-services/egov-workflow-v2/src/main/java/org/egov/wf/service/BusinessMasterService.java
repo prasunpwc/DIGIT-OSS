@@ -1,6 +1,8 @@
 package org.egov.wf.service;
 
 import com.jayway.jsonpath.JsonPath;
+
+import org.egov.infra.persist.consumer.PersisterMessageListener;
 import org.egov.wf.config.WorkflowConfig;
 import org.egov.wf.producer.Producer;
 import org.egov.wf.repository.BusinessServiceRepository;
@@ -26,7 +28,7 @@ import static org.egov.wf.util.WorkflowConstants.JSONPATH_BUSINESSSERVICE_STATEL
 @Service
 public class BusinessMasterService {
 
-    private Producer producer;
+//    private Producer producer;
 
     private WorkflowConfig config;
 
@@ -37,11 +39,14 @@ public class BusinessMasterService {
     private MDMSService mdmsService;
 
     private CacheManager cacheManager;
+    
+    @Autowired
+    private PersisterMessageListener persister;
 
     @Autowired
-    public BusinessMasterService(Producer producer, WorkflowConfig config, EnrichmentService enrichmentService,
+    public BusinessMasterService(WorkflowConfig config, EnrichmentService enrichmentService,
                                  BusinessServiceRepository repository, MDMSService mdmsService, CacheManager cacheManager) {
-        this.producer = producer;
+//        this.producer = producer;
         this.config = config;
         this.enrichmentService = enrichmentService;
         this.repository = repository;
@@ -61,7 +66,10 @@ public class BusinessMasterService {
         evictAllCacheValues("businessService");
         evictAllCacheValues("roleTenantAndStatusesMapping");
         enrichmentService.enrichCreateBusinessService(request);
-        producer.push(config.getSaveBusinessServiceTopic(),request);
+//        producer.push(config.getSaveBusinessServiceTopic(),request);
+        
+        persister.persist(config.getSaveBusinessServiceTopic(),request);
+
         return request.getBusinessServices();
     }
 
@@ -85,7 +93,10 @@ public class BusinessMasterService {
         evictAllCacheValues("businessService");
         evictAllCacheValues("roleTenantAndStatusesMapping");
         enrichmentService.enrichUpdateBusinessService(request);
-        producer.push(config.getUpdateBusinessServiceTopic(),request);
+//        producer.push(config.getUpdateBusinessServiceTopic(),request);
+        
+        persister.persist(config.getUpdateBusinessServiceTopic(),request);
+
         return request.getBusinessServices();
     }
 

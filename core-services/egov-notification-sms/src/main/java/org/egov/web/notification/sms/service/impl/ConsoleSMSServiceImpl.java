@@ -1,12 +1,12 @@
 package org.egov.web.notification.sms.service.impl;
 
-import lombok.extern.slf4j.*;
 import org.egov.web.notification.sms.models.Sms;
-import org.egov.web.notification.sms.service.*;
+import org.egov.web.notification.sms.service.BaseSMSService;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.stereotype.Service;
 
-@Service
+import lombok.extern.slf4j.Slf4j;
+
+//@Service
 @Slf4j
 @ConditionalOnProperty(value = "sms.provider.class", matchIfMissing = true, havingValue = "Console")
 public class ConsoleSMSServiceImpl extends BaseSMSService {

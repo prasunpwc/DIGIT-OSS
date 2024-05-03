@@ -44,7 +44,7 @@ import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.response.ResponseInfo;
 import org.springframework.stereotype.Component;
 
-@Component
+@Component("accessResponseInfoFactory")
 public class ResponseInfoFactory {
 
 	public ResponseInfo createResponseInfoFromRequestInfo(final RequestInfo requestInfo, final Boolean success) {

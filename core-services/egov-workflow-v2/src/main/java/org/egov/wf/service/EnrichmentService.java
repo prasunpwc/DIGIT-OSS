@@ -18,6 +18,7 @@ import org.egov.wf.web.models.*;
 import org.egov.wf.web.models.user.UserSearchRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
@@ -27,7 +28,7 @@ import static org.egov.wf.util.WorkflowConstants.AUTO_ESC_EMPLOYEE_ROLE_CODE;
 import static org.egov.wf.util.WorkflowConstants.UUID_REGEX;
 
 
-@Service
+@Service("wfEnrichmentService")
 @Slf4j
 public class EnrichmentService {
 

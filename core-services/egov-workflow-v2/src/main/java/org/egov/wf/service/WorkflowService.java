@@ -9,6 +9,7 @@ import org.egov.wf.util.WorkflowUtil;
 import org.egov.wf.validator.WorkflowValidator;
 import org.egov.wf.web.models.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.egov.tracer.model.CustomException;
@@ -19,7 +20,7 @@ import static java.util.Objects.isNull;
 import java.util.*;
 
 
-@Service
+@Service("wfWorkflowService")
 public class WorkflowService {
 
     private WorkflowConfig config;

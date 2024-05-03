@@ -16,29 +16,29 @@ import javax.validation.Valid;
  * 
  * @author Pavan Kumar Kamma
  */
-@RestController
-@RequestMapping(path = "/id/")
+//@RestController
+//@RequestMapping(path = "/id/")
 public class IdGenerationController {
 
-	@Autowired
-	IdGenerationService idGenerationService;
-
-	/**
-	 * description: generate unique ID for property
-	 * 
-	 * @param IdGenerationRequest
-	 * @return IdGenerationResponse
-	 * @throws Exception
-	 */
-	@RequestMapping(method = RequestMethod.POST, path = "_generate")
-	public IdGenerationResponse generateIdResponse(
-			@RequestBody @Valid IdGenerationRequest idGenerationRequest)
-			throws Exception {
-
-		IdGenerationResponse idGenerationResponse = idGenerationService
-				.generateIdResponse(idGenerationRequest);
-
-		return idGenerationResponse;
-	}
+//	@Autowired
+//	IdGenerationService idGenerationService;
+//
+//	/**
+//	 * description: generate unique ID for property
+//	 * 
+//	 * @param IdGenerationRequest
+//	 * @return IdGenerationResponse
+//	 * @throws Exception
+//	 */
+//	@RequestMapping(method = RequestMethod.POST, path = "_generate")
+//	public IdGenerationResponse generateIdResponse(
+//			@RequestBody @Valid IdGenerationRequest idGenerationRequest)
+//			throws Exception {
+//
+//		IdGenerationResponse idGenerationResponse = idGenerationService
+//				.generateIdResponse(idGenerationRequest);
+//
+//		return idGenerationResponse;
+//	}
 
 }

@@ -7,7 +7,7 @@ import org.egov.mdms.model.MdmsCriteria;
 import org.egov.mdms.model.MdmsCriteriaReq;
 import org.egov.mdms.model.ModuleDetail;
 import org.egov.wf.config.WorkflowConfig;
-import org.egov.wf.repository.ServiceRequestRepository;
+import org.egov.wf.repository.RestServiceRequestRepository;
 import org.egov.wf.util.WorkflowConstants;
 import org.egov.wf.web.models.ProcessInstanceRequest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,14 +23,14 @@ public class MDMSService {
 
    private WorkflowConfig config;
 
-   private ServiceRequestRepository serviceRequestRepository;
+   private RestServiceRequestRepository serviceRequestRepository;
 
    private WorkflowConfig workflowConfig;
 
    private Map<String,Boolean> stateLevelMapping;
 
     @Autowired
-    public MDMSService(WorkflowConfig config, ServiceRequestRepository serviceRequestRepository, WorkflowConfig workflowConfig) {
+    public MDMSService(WorkflowConfig config, RestServiceRequestRepository serviceRequestRepository, WorkflowConfig workflowConfig) {
         this.config = config;
         this.serviceRequestRepository = serviceRequestRepository;
         this.workflowConfig = workflowConfig;

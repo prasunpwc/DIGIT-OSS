@@ -142,7 +142,7 @@ public class UserService {
 
         /* encrypt here */
 
-        userSearchCriteria = encryptionDecryptionUtil.encryptObject(userSearchCriteria, "User", UserSearchCriteria.class);
+//        userSearchCriteria = encryptionDecryptionUtil.encryptObject(userSearchCriteria, "User", UserSearchCriteria.class);
         List<User> users = userRepository.findAll(userSearchCriteria);
 
         if (users.isEmpty())
@@ -193,7 +193,7 @@ public class UserService {
         	altmobnumber = searchCriteria.getMobileNumber();
         }
 
-        searchCriteria = encryptionDecryptionUtil.encryptObject(searchCriteria, "User", UserSearchCriteria.class);
+//        searchCriteria = encryptionDecryptionUtil.encryptObject(searchCriteria, "User", UserSearchCriteria.class);
         
         if(altmobnumber!=null) {
         	searchCriteria.setAlternatemobilenumber(altmobnumber);
@@ -203,7 +203,7 @@ public class UserService {
 
         /* decrypt here / final reponse decrypted*/
 
-        list = encryptionDecryptionUtil.decryptObject(list, null, User.class, requestInfo);
+//        list = encryptionDecryptionUtil.decryptObject(list, null, User.class, requestInfo);
 
         setFileStoreUrlsByFileStoreIds(list);
         return list;
@@ -220,7 +220,7 @@ public class UserService {
         user.validateNewUser(createUserValidateName);
         conditionallyValidateOtp(user);
         /* encrypt here */
-        user = encryptionDecryptionUtil.encryptObject(user, "User", User.class);
+//        user = encryptionDecryptionUtil.encryptObject(user, "User", User.class);
         validateUserUniqueness(user);
         if (isEmpty(user.getPassword())) {
             user.setPassword(UUID.randomUUID().toString());
@@ -231,7 +231,8 @@ public class UserService {
         user.setDefaultPasswordExpiry(defaultPasswordExpiryInDays);
         user.setTenantId(getStateLevelTenantForCitizen(user.getTenantId(), user.getType()));
         User persistedNewUser = persistNewUser(user);
-        return encryptionDecryptionUtil.decryptObject(persistedNewUser, "UserSelf", User.class, requestInfo);
+//        return encryptionDecryptionUtil.decryptObject(persistedNewUser, "UserSelf", User.class, requestInfo);
+        return user;
 
         /* decrypt here  because encrypted data coming from DB*/
 
@@ -359,16 +360,18 @@ public class UserService {
         validatePassword(user.getPassword());
         user.setPassword(encryptPwd(user.getPassword()));
         /* encrypt */
-        user = encryptionDecryptionUtil.encryptObject(user, "User", User.class);
+//        user = encryptionDecryptionUtil.encryptObject(user, "User", User.class);
         userRepository.update(user, existingUser,requestInfo.getUserInfo().getId(), requestInfo.getUserInfo().getUuid() );
 
         // If user is being unlocked via update, reset failed login attempts
         if (user.getAccountLocked() != null && !user.getAccountLocked() && existingUser.getAccountLocked())
             resetFailedLoginAttempts(user);
 
-        User encryptedUpdatedUserfromDB = getUserByUuid(user.getUuid());
-        User decryptedupdatedUserfromDB = encryptionDecryptionUtil.decryptObject(encryptedUpdatedUserfromDB, "UserSelf", User.class, requestInfo);
-        return decryptedupdatedUserfromDB;
+//        User encryptedUpdatedUserfromDB = getUserByUuid(user.getUuid());
+//        User decryptedupdatedUserfromDB = encryptionDecryptionUtil.decryptObject(encryptedUpdatedUserfromDB, "UserSelf", User.class, requestInfo);
+        
+        User updatedUserfromDB = getUserByUuid(user.getUuid());
+        return updatedUserfromDB;
     }
 
     public void removeTokensByUser(User user) {
@@ -410,7 +413,7 @@ public class UserService {
      */
     public User partialUpdate(User user, RequestInfo requestInfo) {
         /* encrypt here */
-        user = encryptionDecryptionUtil.encryptObject(user, "User", User.class);
+//        user = encryptionDecryptionUtil.encryptObject(user, "User", User.class);
 
         User existingUser = getUserByUuid(user.getUuid());
         validateProfileUpdateIsDoneByTheSameLoggedInUser(user);
@@ -420,15 +423,15 @@ public class UserService {
         User updatedUser = getUserByUuid(user.getUuid());
         
         /* decrypt here */
-        existingUser = encryptionDecryptionUtil.decryptObject(existingUser, "UserSelf", User.class, requestInfo);
-        updatedUser = encryptionDecryptionUtil.decryptObject(updatedUser, "UserSelf", User.class, requestInfo);
+//        existingUser = encryptionDecryptionUtil.decryptObject(existingUser, "UserSelf", User.class, requestInfo);
+//        updatedUser = encryptionDecryptionUtil.decryptObject(updatedUser, "UserSelf", User.class, requestInfo);
 
         setFileStoreUrlsByFileStoreIds(Collections.singletonList(updatedUser));
         String oldEmail = existingUser.getEmailId();
         String newEmail = updatedUser.getEmailId();
         if((oldEmail != null && !oldEmail.isEmpty()) && newEmail != null && !(newEmail.equalsIgnoreCase(oldEmail))) {
             // Sending sms and email to old email to notify that email has been changed
-            notificationUtil.sendEmail(requestInfo, existingUser, updatedUser);
+//            notificationUtil.sendEmail(requestInfo, existingUser, updatedUser);
         }
         return updatedUser;
     }
@@ -473,14 +476,14 @@ public class UserService {
         }
         /* decrypt here */
         /* the reason for decryption here is the otp service requires decrypted username */
-        user = encryptionDecryptionUtil.decryptObject(user, "User", User.class, requestInfo);
+//        user = encryptionDecryptionUtil.decryptObject(user, "User", User.class, requestInfo);
         user.setOtpReference(request.getOtpReference());
         validateOtp(user);
         validatePassword(request.getNewPassword());
         user.updatePassword(encryptPwd(request.getNewPassword()));
         /* encrypt here */
         /* encrypted value is stored in DB*/
-        user = encryptionDecryptionUtil.encryptObject(user, "User", User.class);
+//        user = encryptionDecryptionUtil.encryptObject(user, "User", User.class);
         userRepository.update(user, user,requestInfo.getUserInfo().getId() , requestInfo.getUserInfo().getUuid());
     }
 

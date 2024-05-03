@@ -63,11 +63,11 @@ public class PGRConfiguration {
     private String egovInternalMicroserviceUserUuid;
 
     //Idgen Config
-    @Value("${egov.idgen.host}")
-    private String idGenHost;
+//    @Value("${egov.idgen.host}")
+//    private String idGenHost;
 
-    @Value("${egov.idgen.path}")
-    private String idGenPath;
+//    @Value("${egov.idgen.path}")
+//    private String idGenPath;
 
     @Value("${egov.idgen.pgr.serviceRequestId.name}")
     private String serviceRequestIdGenName;
@@ -79,17 +79,17 @@ public class PGRConfiguration {
     @Value("${pgr.business.codes}")
     private List<String> businessServiceList;
 
-    @Value("${egov.workflow.host}")
-    private String wfHost;
+//    @Value("${egov.workflow.host}")
+//    private String wfHost;
 
-    @Value("${egov.workflow.transition.path}")
-    private String wfTransitionPath;
+//    @Value("${egov.workflow.transition.path}")
+//    private String wfTransitionPath;
 
-    @Value("${egov.workflow.businessservice.search.path}")
-    private String wfBusinessServiceSearchPath;
+//    @Value("${egov.workflow.businessservice.search.path}")
+//    private String wfBusinessServiceSearchPath;
 
-    @Value("${egov.workflow.processinstance.search.path}")
-    private String wfProcessInstanceSearchPath;
+//    @Value("${egov.workflow.processinstance.search.path}")
+//    private String wfProcessInstanceSearchPath;
 
     @Value("${is.workflow.enabled}")
     private Boolean isWorkflowEnabled;
@@ -127,11 +127,11 @@ public class PGRConfiguration {
     private String mdmsEndPoint;
 
     //HRMS
-    @Value("${egov.hrms.host}")
-    private String hrmsHost;
+//    @Value("${egov.hrms.host}")
+//    private String hrmsHost;
 
-    @Value("${egov.hrms.search.endpoint}")
-    private String hrmsEndPoint;
+//    @Value("${egov.hrms.search.endpoint}")
+//    private String hrmsEndPoint;
 
     //Notification
     @Value("${egov.user.event.notification.enabled}")
@@ -143,14 +143,14 @@ public class PGRConfiguration {
     @Value("${egov.localization.statelevel}")
     private Boolean isLocalizationStateLevel;
 
-    @Value("${egov.localization.host}")
-    private String localizationHost;
+//    @Value("${egov.localization.host}")
+//    private String localizationHost;
 
-    @Value("${egov.localization.context.path}")
-    private String localizationContextPath;
+//    @Value("${egov.localization.context.path}")
+//    private String localizationContextPath;
 
-    @Value("${egov.localization.search.endpoint}")
-    private String localizationSearchEndpoint;
+//    @Value("${egov.localization.search.endpoint}")
+//    private String localizationSearchEndpoint;
 
     @Value("${kafka.topics.notification.sms}")
     private String smsNotifTopic;
@@ -161,11 +161,11 @@ public class PGRConfiguration {
     @Value("${mseva.mobile.app.download.link}")
     private String mobileDownloadLink;
 
-    @Value("${egov.url.shortner.host}")
-    private String urlShortnerHost;
+//    @Value("${egov.url.shortner.host}")
+//    private String urlShortnerHost;
 
-    @Value("${egov.url.shortner.endpoint}")
-    private String urlShortnerEndpoint;
+//    @Value("${egov.url.shortner.endpoint}")
+//    private String urlShortnerEndpoint;
 
     @Value("${egov.ui.app.host}")
     private String uiAppHost;

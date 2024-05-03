@@ -57,6 +57,7 @@ import org.egov.hrms.utils.HRMSConstants;
 import org.egov.hrms.utils.HRMSUtils;
 import org.egov.hrms.utils.ResponseInfoFactory;
 import org.egov.hrms.web.contract.*;
+import org.egov.infra.persist.consumer.PersisterMessageListener;
 import org.egov.tracer.kafka.LogAwareKafkaTemplate;
 import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -102,6 +103,9 @@ public class EmployeeService {
 	
 	@Autowired
 	private ObjectMapper objectMapper;
+	
+	@Autowired
+	private PersisterMessageListener persister;
 
 	/**
 	 * Service method for create employee. Does following:
@@ -123,7 +127,10 @@ public class EmployeeService {
 			pwdMap.put(employee.getUuid(), employee.getUser().getPassword());
 			employee.getUser().setPassword(null);
 		});
-		hrmsProducer.push(propertiesManager.getSaveEmployeeTopic(), employeeRequest);
+//		hrmsProducer.push(propertiesManager.getSaveEmployeeTopic(), employeeRequest);
+		
+        persister.persist(propertiesManager.getSaveEmployeeTopic(), employeeRequest);
+		
 		notificationService.sendNotification(employeeRequest, pwdMap);
 		return generateResponse(employeeRequest);
 	}
@@ -337,7 +344,10 @@ public class EmployeeService {
 			enrichUpdateRequest(employee, requestInfo, existingEmployees);
 			updateUser(employee, requestInfo);
 		});
-		hrmsProducer.push(propertiesManager.getUpdateTopic(), employeeRequest);
+//		hrmsProducer.push(propertiesManager.getUpdateTopic(), employeeRequest);
+		
+        persister.persist(propertiesManager.getUpdateTopic(), employeeRequest);
+		
 		//notificationService.sendReactivationNotification(employeeRequest);
 		return generateResponse(employeeRequest);
 	}

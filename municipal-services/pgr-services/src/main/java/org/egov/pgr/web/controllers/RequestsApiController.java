@@ -26,19 +26,22 @@ import javax.validation.Valid;
 @Slf4j
 public class RequestsApiController{
 
-    private final ObjectMapper objectMapper;
+	@Autowired
+    private ObjectMapper objectMapper;
 
+	@Autowired
     private PGRService pgrService;
 
+	@Autowired
     private ResponseInfoFactory responseInfoFactory;
 
 
-    @Autowired
-    public RequestsApiController(ObjectMapper objectMapper, PGRService pgrService, ResponseInfoFactory responseInfoFactory) {
-        this.objectMapper = objectMapper;
-        this.pgrService = pgrService;
-        this.responseInfoFactory = responseInfoFactory;
-    }
+//    @Autowired
+//    public RequestsApiController(ObjectMapper objectMapper, PGRService pgrService, ResponseInfoFactory responseInfoFactory) {
+//        this.objectMapper = objectMapper;
+//        this.pgrService = pgrService;
+//        this.responseInfoFactory = responseInfoFactory;
+//    }
 
 
     @RequestMapping(value="/request/_create", method = RequestMethod.POST)

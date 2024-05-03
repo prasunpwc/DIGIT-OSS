@@ -19,6 +19,7 @@ import lombok.*;
 @ToString
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 public class IdRequest {
 
 	@Size(max = 200)

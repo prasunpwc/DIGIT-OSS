@@ -32,14 +32,14 @@ public class Main {
     @Value("${cache.expiry.workflow.minutes}")
     private int workflowExpiry;
 
-    @Bean
-    public ObjectMapper objectMapper(){
-        return new ObjectMapper()
-                .configure(MapperFeature.ACCEPT_CASE_INSENSITIVE_PROPERTIES, true)
-                .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
-                .enable(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY)
-                .setTimeZone(TimeZone.getTimeZone(timeZone));
-    }
+//    @Bean
+//    public ObjectMapper objectMapper(){
+//        return new ObjectMapper()
+//                .configure(MapperFeature.ACCEPT_CASE_INSENSITIVE_PROPERTIES, true)
+//                .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
+//                .enable(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY)
+//                .setTimeZone(TimeZone.getTimeZone(timeZone));
+//    }
 
     public static void main(String[] args) throws Exception {
         SpringApplication.run(Main.class, args);

@@ -1,14 +1,19 @@
 package org.egov.user.persistence.repository;
 
+import org.egov.access.web.contract.action.ActionContract;
+import org.egov.access.web.contract.action.ActionRequest;
+import org.egov.access.web.contract.action.ActionResponse;
+import org.egov.access.web.controller.ActionController;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.user.domain.model.Action;
-import org.egov.user.persistence.dto.ActionRequest;
-import org.egov.user.persistence.dto.ActionResponse;
+import org.json.JSONException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import java.io.UnsupportedEncodingException;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class ActionRestRepository {
@@ -18,11 +23,12 @@ public class ActionRestRepository {
     @Value("${egov.mdms.actions}")
     private String actionFile;
 
-    public ActionRestRepository(final RestTemplate restTemplate,
-                                @Value("${egov.services.accesscontrol.host}") final String accessControlHost,
-                                @Value("${egov.services.accesscontrol.action_search}") final String url) {
+    public ActionRestRepository(final RestTemplate restTemplate
+//                                @Value("${egov.services.accesscontrol.host}") final String accessControlHost,
+//                                @Value("${egov.services.accesscontrol.action_search}") final String url
+                                ) {
         this.restTemplate = restTemplate;
-        this.url = accessControlHost + url;
+//        this.url = accessControlHost + url;
     }
 
     /**
@@ -31,8 +37,10 @@ public class ActionRestRepository {
      * @param roleCodes
      * @param tenantId
      * @return
+     * @throws JSONException 
+     * @throws UnsupportedEncodingException 
      */
-    public List<Action> getActionByRoleCodes(final List<String> roleCodes, String tenantId) {
+    public List<Action> getActionByRoleCodes(final List<String> roleCodes, String tenantId) throws UnsupportedEncodingException, JSONException {
         String actionFileName = "";
         actionFileName = actionFile;
         ActionRequest actionRequest = ActionRequest.builder()
@@ -42,8 +50,14 @@ public class ActionRestRepository {
                 .actionMaster(actionFileName)
                 .build();
 
-        final ActionResponse actionResponse = restTemplate.postForObject(url, actionRequest, ActionResponse.class);
-        return actionResponse.toDomainActions();
+//        final ActionResponse actionResponse = restTemplate.postForObject(url, actionRequest, ActionResponse.class);
+        //CHANGE: lightweight Digit
+        ActionController actionController = new ActionController();
+        final ActionResponse actionResponse = actionController.getActionsBasedOnRoles(actionRequest);
+        return actionRequest.getActions().stream()
+        	.map(ac -> {return Action.builder().name(ac.getName()).url(ac.getUrl()).displayName(ac.getDisplayName()).orderNumber(ac.getOrderNumber())
+                .queryParams(ac.getQueryParams()).parentModule(ac.getParentModule()).serviceCode(ac.getServiceCode()).build();}).collect(Collectors.toList());
+//        return actionResponse.toDomainActions();
     }
 
 }

@@ -51,6 +51,7 @@ import org.egov.hrms.web.validator.EmployeeValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Component;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
@@ -59,8 +60,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Slf4j
-@RestController
-@RequestMapping("/employees")
+//@RestController
+//@RequestMapping("/employees")
+@Component
 public class EmployeeController {
 
 	@Autowired
@@ -78,9 +80,9 @@ public class EmployeeController {
 	 * @param bindingResult
 	 * @return ResponseEntity<?>
 	 */
-	@PostMapping(value = "/_create")
-	@ResponseBody
-	public ResponseEntity<?> create(@RequestBody @Valid EmployeeRequest employeeRequest) {
+//	@PostMapping(value = "/_create")
+//	@ResponseBody
+	public ResponseEntity<?> create(@Valid EmployeeRequest employeeRequest) {
 		validator.validateCreateEmployee(employeeRequest);
 		EmployeeResponse employeeResponse = employeeService.create(employeeRequest);
         return new ResponseEntity<>(employeeResponse, HttpStatus.ACCEPTED);
@@ -95,9 +97,9 @@ public class EmployeeController {
 	 * @param bindingResult
 	 * @return ResponseEntity<?>
 	 */
-	@PostMapping(value = "/_update")
-	@ResponseBody
-	public ResponseEntity<?> update(@RequestBody @Valid EmployeeRequest employeeRequest) {
+//	@PostMapping(value = "/_update")
+//	@ResponseBody
+	public ResponseEntity<?> update(@Valid EmployeeRequest employeeRequest) {
 		validator.validateUpdateEmployee(employeeRequest);
 		EmployeeResponse employeeResponse = employeeService.update(employeeRequest);
 		return new ResponseEntity<>(employeeResponse, HttpStatus.ACCEPTED);
@@ -112,17 +114,17 @@ public class EmployeeController {
 	 * @param bindingResult
 	 * @return ResponseEntity<?>
 	 */
-	@PostMapping(value = "/_search")
-	@ResponseBody
-	public ResponseEntity<?> search(@RequestBody @Valid RequestInfoWrapper requestInfoWrapper, @ModelAttribute @Valid EmployeeSearchCriteria criteria) {
+//	@PostMapping(value = "/_search")
+//	@ResponseBody
+	public EmployeeResponse search(@Valid RequestInfoWrapper requestInfoWrapper, @Valid EmployeeSearchCriteria criteria) {
 		validator.validateSearchRequest(requestInfoWrapper.getRequestInfo(), criteria);
 		EmployeeResponse employeeResponse = employeeService.search(criteria, requestInfoWrapper.getRequestInfo());
-		return new ResponseEntity<>(employeeResponse,HttpStatus.OK);
+		return employeeResponse;
 	}
 
-	@PostMapping("_count")
-	@ResponseBody
-	private ResponseEntity<?> count(@RequestParam("tenantId") String tenantId, @RequestBody RequestInfo requestInfo) {
+//	@PostMapping("_count")
+//	@ResponseBody
+	private ResponseEntity<?> count(String tenantId, RequestInfo requestInfo) {
 
 		Map<String,Object> response = new HashMap<>();
 		validator.validateEmployeeCountRequest(tenantId);

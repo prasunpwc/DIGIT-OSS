@@ -8,6 +8,8 @@ import org.egov.pgr.web.models.User;
 import org.egov.pgr.web.models.user.UserDetailResponse;
 import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Component;
 
 import java.text.ParseException;
@@ -16,6 +18,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Component
 public class UserUtils {
@@ -26,7 +29,7 @@ public class UserUtils {
     private ServiceRequestRepository serviceRequestRepository;
 
     private PGRConfiguration config;
-
+    
     @Autowired
     public UserUtils(ObjectMapper mapper, ServiceRequestRepository serviceRequestRepository, PGRConfiguration config) {
         this.mapper = mapper;
@@ -58,7 +61,60 @@ public class UserUtils {
             throw new CustomException("IllegalArgumentException","ObjectMapper not able to convertValue in userCall");
         }
     }
+    
+//    public UserDetailResponse userCall(Object userRequest, String purpose, HttpHeaders headers) {
+//        String dobFormat = null;
+//        if(purpose.equalsIgnoreCase("SEARCH") || purpose.equalsIgnoreCase("UPDATE"))
+//            dobFormat="yyyy-MM-dd";
+//        else if(purpose.equalsIgnoreCase("CREATE"))
+//            dobFormat = "dd/MM/yyyy";
+//        
+//        UserDetailResponse userDetailResponse=null;
+//        
+//        if(purpose.equalsIgnoreCase("SEARCH")) {
+//        	UserSearchResponse userResponse = user.get((UserSearchRequest)userRequest, headers);
+//        	userDetailResponse = transformUserSearchResponseToUserDetailsResponse(userResponse);
+//        } else if(purpose.equalsIgnoreCase("CREATE")) {
+//        	org.egov.user.web.contract.UserDetailResponse userResponse = user.createUserWithoutValidation((CreateUserRequest)userRequest, headers); 
+//        	userDetailResponse = transformUserDetailResponseToUserDetailResponse(userResponse);
+//        } else if(purpose.equalsIgnoreCase("UPDATE")) {
+//        	UpdateResponse userResponse = user.updateUserWithoutValidation((CreateUserRequest)userRequest, headers);
+//        	userDetailResponse = transformUpdateResponseToUserDetailResponse(userResponse);
+//        }
+//        
+//        return userDetailResponse;
+//        
+//    }
 
+
+//	private UserDetailResponse transformUpdateResponseToUserDetailResponse(UpdateResponse userResponse) {
+//		return UserDetailResponse.builder().responseInfo(userResponse.getResponseInfo())
+//				.user(userResponse.getUser().stream().map(user -> User.builder().id(user.getId())
+//						.userName(user.getUserName()).name(user.getName()).type(user.getType().toString()).mobileNumber(user.getMobileNumber())
+//						.emailId(user.getEmailId()).tenantId(user.getTenantId()).uuid(user.getUuid()).active(user.getActive())
+//						.roles(user.getRoles().stream().map(role -> Role.builder().code(role.getCode()).tenantId(role.getTenantId()).name(role.getName()).build()).collect(Collectors.toList()))
+//						.build()).collect(Collectors.toList())).build();
+//	}
+//
+//	private UserDetailResponse transformUserDetailResponseToUserDetailResponse(
+//			org.egov.user.web.contract.UserDetailResponse userResponse) {
+//		return UserDetailResponse.builder().responseInfo(userResponse.getResponseInfo())
+//				.user(userResponse.getUser().stream().map(user -> User.builder().id(user.getId())
+//						.userName(user.getUserName()).name(user.getName()).type(user.getType().toString()).mobileNumber(user.getMobileNumber())
+//						.emailId(user.getEmailId()).tenantId(user.getTenantId()).uuid(user.getUuid()).active(user.getActive())
+//						.roles(user.getRoles().stream().map(role -> Role.builder().code(role.getCode()).tenantId(role.getTenantId()).name(role.getName()).build()).collect(Collectors.toList()))
+//						.build()).collect(Collectors.toList())).build();
+//		
+//	}
+//
+//	private UserDetailResponse transformUserSearchResponseToUserDetailsResponse(UserSearchResponse userResponse) {
+//		return UserDetailResponse.builder().responseInfo(userResponse.getResponseInfo())
+//				.user(userResponse.getUserSearchResponseContent().stream().map(user -> User.builder().id(user.getId())
+//						.userName(user.getUserName()).name(user.getName()).type(user.getType().toString()).mobileNumber(user.getMobileNumber())
+//						.emailId(user.getEmailId()).tenantId(user.getTenantId()).uuid(user.getUuid()).active(user.getActive())
+//						.roles(user.getRoles().stream().map(role -> Role.builder().code(role.getCode()).tenantId(role.getTenantId()).name(role.getName()).build()).collect(Collectors.toList()))
+//						.build()).collect(Collectors.toList())).build();
+//	}
 
 /**
  * Parses date formats to long for all users in responseMap

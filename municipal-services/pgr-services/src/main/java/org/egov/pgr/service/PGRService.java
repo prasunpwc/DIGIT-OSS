@@ -2,7 +2,9 @@ package org.egov.pgr.service;
 
 
 import org.egov.common.contract.request.RequestInfo;
+import org.egov.infra.persist.consumer.PersisterMessageListener;
 import org.egov.pgr.config.PGRConfiguration;
+import org.egov.pgr.consumer.NotificationConsumer;
 import org.egov.pgr.producer.Producer;
 import org.egov.pgr.repository.PGRRepository;
 import org.egov.pgr.util.MDMSUtils;
@@ -11,6 +13,8 @@ import org.egov.pgr.web.models.ServiceWrapper;
 import org.egov.pgr.web.models.RequestSearchCriteria;
 import org.egov.pgr.web.models.ServiceRequest;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.http.HttpHeaders;
 import org.springframework.util.CollectionUtils;
 
 import java.util.*;
@@ -30,25 +34,31 @@ public class PGRService {
 
     private ServiceRequestValidator validator;
 
-    private Producer producer;
+//    private Producer producer;
 
     private PGRConfiguration config;
 
     private PGRRepository repository;
 
     private MDMSUtils mdmsUtils;
-
+    
+    @Autowired
+    @Lazy
+    private PersisterMessageListener persister;
+    
+    @Autowired
+    private NotificationConsumer notificationConsumer;
 
     @Autowired
     public PGRService(EnrichmentService enrichmentService, UserService userService, WorkflowService workflowService,
-                      ServiceRequestValidator serviceRequestValidator, ServiceRequestValidator validator, Producer producer,
+                      ServiceRequestValidator serviceRequestValidator, ServiceRequestValidator validator,
                       PGRConfiguration config, PGRRepository repository, MDMSUtils mdmsUtils) {
         this.enrichmentService = enrichmentService;
         this.userService = userService;
         this.workflowService = workflowService;
         this.serviceRequestValidator = serviceRequestValidator;
         this.validator = validator;
-        this.producer = producer;
+//        this.producer = producer;
         this.config = config;
         this.repository = repository;
         this.mdmsUtils = mdmsUtils;
@@ -65,7 +75,10 @@ public class PGRService {
         validator.validateCreate(request, mdmsData);
         enrichmentService.enrichCreateRequest(request);
         workflowService.updateWorkflowStatus(request);
-        producer.push(config.getCreateTopic(),request);
+//        producer.push(config.getCreateTopic(),request);
+        
+        persister.persist(config.getCreateTopic(), request);
+        notificationConsumer.listen(request, config.getCreateTopic());
         return request;
     }
 
@@ -94,7 +107,7 @@ public class PGRService {
         if(CollectionUtils.isEmpty(serviceWrappers))
             return new ArrayList<>();;
 
-        userService.enrichUsers(serviceWrappers);
+//        userService.enrichUsers(serviceWrappers);
         List<ServiceWrapper> enrichedServiceWrappers = workflowService.enrichWorkflow(requestInfo,serviceWrappers);
         Map<Long, List<ServiceWrapper>> sortedWrappers = new TreeMap<>(Collections.reverseOrder());
         for(ServiceWrapper svc : enrichedServiceWrappers){
@@ -124,7 +137,10 @@ public class PGRService {
         validator.validateUpdate(request, mdmsData);
         enrichmentService.enrichUpdateRequest(request);
         workflowService.updateWorkflowStatus(request);
-        producer.push(config.getUpdateTopic(),request);
+//        producer.push(config.getUpdateTopic(),request);
+        
+        persister.persist(config.getUpdateTopic(),request);
+
         return request;
     }
 

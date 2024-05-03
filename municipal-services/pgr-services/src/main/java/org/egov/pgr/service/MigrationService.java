@@ -14,11 +14,15 @@ import org.egov.pgr.web.models.pgrV1.Service;
 import org.egov.pgr.web.models.pgrV1.ServiceResponse;
 import org.egov.pgr.web.models.workflow.*;
 import org.egov.tracer.model.CustomException;
+import org.egov.wf.web.models.Document;
+import org.egov.wf.web.models.ProcessInstance;
+import org.egov.wf.web.models.ProcessInstanceRequest;
+import org.egov.wf.web.models.State;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
-
 import javax.annotation.PostConstruct;
 import java.util.*;
 
@@ -26,7 +30,7 @@ import static org.egov.pgr.util.PGRConstants.IMAGE_DOCUMENT_TYPE;
 import static org.egov.pgr.util.PGRConstants.PGR_BUSINESSSERVICE;
 import static org.egov.pgr.util.PGRConstants.PGR_MODULENAME;
 
-@Component
+//@Component
 @Slf4j
 public class MigrationService {
 
@@ -363,7 +367,7 @@ public class MigrationService {
         State state = State.builder().uuid(stateUUID).state(oldToNewStatus.get(status)).build();
 
         // LastmodifiedTime and by is same as that for created as every time new entry is created whenever any action is taken
-        AuditDetails auditDetails = AuditDetails.builder().createdBy(createdBy)
+        org.egov.wf.web.models.AuditDetails auditDetails = org.egov.wf.web.models.AuditDetails.builder().createdBy(createdBy)
                 .createdTime(createdTime).lastModifiedBy(createdBy).lastModifiedTime(createdTime).build();
 
         // Setting uuid in place of id in auditDetails

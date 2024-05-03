@@ -12,7 +12,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 
-@Component
+@Component("userErrorHandler")
 public class ErrorHandler {
     @Autowired
     private ResponseInfoFactory responseInfoFactory;

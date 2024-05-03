@@ -8,6 +8,8 @@ import java.util.regex.Pattern;
 import javax.sql.DataSource;
 
 import lombok.extern.slf4j.Slf4j;
+
+import org.egov.common.contract.request.RequestInfo;
 import org.egov.id.config.PropertiesManager;
 import org.egov.id.model.IDSeqOverflowException;
 import org.egov.id.model.IdGenerationRequest;
@@ -15,7 +17,7 @@ import org.egov.id.model.IdGenerationResponse;
 import org.egov.id.model.IdRequest;
 import org.egov.id.model.IdResponse;
 import org.egov.id.model.InvalidIDFormatException;
-import org.egov.id.model.RequestInfo;
+//import org.egov.id.model.RequestInfo;
 import org.egov.id.model.ResponseInfoFactory;
 import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;

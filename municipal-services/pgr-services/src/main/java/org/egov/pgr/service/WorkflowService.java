@@ -8,8 +8,19 @@ import org.egov.pgr.config.PGRConfiguration;
 import org.egov.pgr.repository.ServiceRequestRepository;
 import org.egov.pgr.web.models.*;
 import org.egov.pgr.web.models.workflow.*;
+import org.egov.wf.web.models.BusinessService;
+import org.egov.wf.web.models.BusinessServiceSearchCriteria;
+import org.egov.wf.web.models.ProcessInstance;
+import org.egov.wf.web.models.ProcessInstanceRequest;
+import org.egov.wf.web.models.ProcessInstanceResponse;
+import org.egov.wf.web.models.ProcessInstanceSearchCriteria;
+import org.egov.wf.web.models.State;
 import org.egov.tracer.model.CustomException;
+import org.egov.wf.web.controllers.BusinessServiceController;
+import org.egov.wf.web.controllers.WorkflowController;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.http.HttpHeaders;
 import org.springframework.util.CollectionUtils;
 
 import java.util.*;
@@ -25,6 +36,14 @@ public class WorkflowService {
     private ServiceRequestRepository repository;
 
     private ObjectMapper mapper;
+    
+    @Autowired
+    @Lazy
+    private BusinessServiceController businessServiceController;
+    
+    @Autowired
+    @Lazy
+    private WorkflowController wf;
 
 
     @Autowired
@@ -41,20 +60,22 @@ public class WorkflowService {
      * */
     public BusinessService getBusinessService(ServiceRequest serviceRequest) {
         String tenantId = serviceRequest.getService().getTenantId();
-        StringBuilder url = getSearchURLWithParams(tenantId, PGR_BUSINESSSERVICE);
-        RequestInfoWrapper requestInfoWrapper = RequestInfoWrapper.builder().requestInfo(serviceRequest.getRequestInfo()).build();
-        Object result = repository.fetchResult(url, requestInfoWrapper);
-        BusinessServiceResponse response = null;
-        try {
-            response = mapper.convertValue(result, BusinessServiceResponse.class);
-        } catch (IllegalArgumentException e) {
-            throw new CustomException("PARSING ERROR", "Failed to parse response of workflow business service search");
-        }
+//        StringBuilder url = getSearchURLWithParams(tenantId, PGR_BUSINESSSERVICE);
+        org.egov.wf.web.models.RequestInfoWrapper requestInfoWrapper = org.egov.wf.web.models.RequestInfoWrapper.builder().requestInfo(serviceRequest.getRequestInfo()).build();
+//        Object result = repository.fetchResult(url, requestInfoWrapper);
+        BusinessServiceSearchCriteria searchCriteria = BusinessServiceSearchCriteria.builder().tenantId(tenantId).businessServices(Arrays.asList(PGR_BUSINESSSERVICE)).build();
+        org.egov.wf.web.models.BusinessServiceResponse result = businessServiceController.search(searchCriteria, requestInfoWrapper);
+//        BusinessServiceResponse response = null;
+//        try {
+//            response = mapper.convertValue(result, BusinessServiceResponse.class);
+//        } catch (IllegalArgumentException e) {
+//            throw new CustomException("PARSING ERROR", "Failed to parse response of workflow business service search");
+//        }
 
-        if (CollectionUtils.isEmpty(response.getBusinessServices()))
+        if (CollectionUtils.isEmpty(result.getBusinessServices()))
             throw new CustomException("BUSINESSSERVICE_NOT_FOUND", "The businessService " + PGR_BUSINESSSERVICE + " is not found");
 
-        return response.getBusinessServices().get(0);
+        return result.getBusinessServices().get(0);
     }
 
 
@@ -65,7 +86,8 @@ public class WorkflowService {
      * */
     public String updateWorkflowStatus(ServiceRequest serviceRequest) {
         ProcessInstance processInstance = getProcessInstanceForPGR(serviceRequest);
-        ProcessInstanceRequest workflowRequest = new ProcessInstanceRequest(serviceRequest.getRequestInfo(), Collections.singletonList(processInstance));
+//        ProcessInstanceRequest workflowRequest = new ProcessInstanceRequest(serviceRequest.getRequestInfo(), Collections.singletonList(processInstance));
+        ProcessInstanceRequest workflowRequest = ProcessInstanceRequest.builder().requestInfo(serviceRequest.getRequestInfo()).processInstances(Collections.singletonList(processInstance)).build();
         State state = callWorkFlow(workflowRequest);
         serviceRequest.getService().setApplicationStatus(state.getApplicationStatus());
         return state.getApplicationStatus();
@@ -88,16 +110,16 @@ public class WorkflowService {
      * @param businessService The businessService for which url is generated
      * @return The search url
      */
-    private StringBuilder getSearchURLWithParams(String tenantId, String businessService) {
-
-        StringBuilder url = new StringBuilder(pgrConfiguration.getWfHost());
-        url.append(pgrConfiguration.getWfBusinessServiceSearchPath());
-        url.append("?tenantId=");
-        url.append(tenantId);
-        url.append("&businessServices=");
-        url.append(businessService);
-        return url;
-    }
+//    private StringBuilder getSearchURLWithParams(String tenantId, String businessService) {
+//
+//        StringBuilder url = new StringBuilder(pgrConfiguration.getWfHost());
+//        url.append(pgrConfiguration.getWfBusinessServiceSearchPath());
+//        url.append("?tenantId=");
+//        url.append(tenantId);
+//        url.append("&businessServices=");
+//        url.append(businessService);
+//        return url;
+//    }
 
 
     public void enrichmentForSendBackToCititzen() {
@@ -125,18 +147,19 @@ public class WorkflowService {
                 serviceRequestIds.add(pgrEntity.getService().getServiceRequestId());
             });
 
-            RequestInfoWrapper requestInfoWrapper = RequestInfoWrapper.builder().requestInfo(requestInfo).build();
+            org.egov.wf.web.models.RequestInfoWrapper requestInfoWrapper = org.egov.wf.web.models.RequestInfoWrapper.builder().requestInfo(requestInfo).build();
 
-            StringBuilder searchUrl = getprocessInstanceSearchURL(tenantId, StringUtils.join(serviceRequestIds, ','));
-            Object result = repository.fetchResult(searchUrl, requestInfoWrapper);
+//            StringBuilder searchUrl = getprocessInstanceSearchURL(tenantId, StringUtils.join(serviceRequestIds, ','));
+//            Object result = repository.fetchResult(searchUrl, requestInfoWrapper);
+            ProcessInstanceSearchCriteria criteria = ProcessInstanceSearchCriteria.builder().tenantId(tenantId).businessIds(serviceRequestIds).build();
+            ProcessInstanceResponse processInstanceResponse = wf.search(requestInfoWrapper, criteria);
 
-
-            ProcessInstanceResponse processInstanceResponse = null;
-            try {
-                processInstanceResponse = mapper.convertValue(result, ProcessInstanceResponse.class);
-            } catch (IllegalArgumentException e) {
-                throw new CustomException("PARSING ERROR", "Failed to parse response of workflow processInstance search");
-            }
+//            ProcessInstanceResponse processInstanceResponse = null;
+//            try {
+//                processInstanceResponse = mapper.convertValue(result, ProcessInstanceResponse.class);
+//            } catch (IllegalArgumentException e) {
+//                throw new CustomException("PARSING ERROR", "Failed to parse response of workflow processInstance search");
+//            }
 
             if (CollectionUtils.isEmpty(processInstanceResponse.getProcessInstances()) || processInstanceResponse.getProcessInstances().size() != serviceRequestIds.size())
                 throw new CustomException("WORKFLOW_NOT_FOUND", "The workflow object is not found");
@@ -240,24 +263,25 @@ public class WorkflowService {
     private State callWorkFlow(ProcessInstanceRequest workflowReq) {
 
         ProcessInstanceResponse response = null;
-        StringBuilder url = new StringBuilder(pgrConfiguration.getWfHost().concat(pgrConfiguration.getWfTransitionPath()));
-        Object optional = repository.fetchResult(url, workflowReq);
+//        StringBuilder url = new StringBuilder(pgrConfiguration.getWfHost().concat(pgrConfiguration.getWfTransitionPath()));
+//        Object optional = repository.fetchResult(url, workflowReq);
+        Object optional = wf.processTransition(workflowReq);
         response = mapper.convertValue(optional, ProcessInstanceResponse.class);
         return response.getProcessInstances().get(0).getState();
     }
 
 
-    public StringBuilder getprocessInstanceSearchURL(String tenantId, String serviceRequestId) {
-
-        StringBuilder url = new StringBuilder(pgrConfiguration.getWfHost());
-        url.append(pgrConfiguration.getWfProcessInstanceSearchPath());
-        url.append("?tenantId=");
-        url.append(tenantId);
-        url.append("&businessIds=");
-        url.append(serviceRequestId);
-        return url;
-
-    }
+//    public StringBuilder getprocessInstanceSearchURL(String tenantId, String serviceRequestId) {
+//
+//        StringBuilder url = new StringBuilder(pgrConfiguration.getWfHost());
+//        url.append(pgrConfiguration.getWfProcessInstanceSearchPath());
+//        url.append("?tenantId=");
+//        url.append(tenantId);
+//        url.append("&businessIds=");
+//        url.append(serviceRequestId);
+//        return url;
+//
+//    }
 
 
 }

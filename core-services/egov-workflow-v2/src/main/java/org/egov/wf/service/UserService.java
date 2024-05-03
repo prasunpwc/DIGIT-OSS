@@ -3,36 +3,38 @@ package org.egov.wf.service;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.egov.common.contract.request.RequestInfo;
+import org.egov.common.contract.request.Role;
 import org.egov.common.contract.request.User;
 import org.egov.common.contract.response.ResponseInfo;
 import org.egov.tracer.model.CustomException;
 import org.egov.wf.config.WorkflowConfig;
-import org.egov.wf.repository.ServiceRequestRepository;
+import org.egov.wf.repository.RestServiceRequestRepository;
 import org.egov.wf.web.models.user.UserDetailResponse;
 import org.egov.wf.web.models.user.UserSearchRequest;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.stream.Collectors;
 
 
-@Service
+@Service("wfUserService")
 @Slf4j
 public class UserService {
 
 
     private WorkflowConfig config;
 
-    private ServiceRequestRepository serviceRequestRepository;
+    private RestServiceRequestRepository serviceRequestRepository;
 
     private ObjectMapper mapper;
-
-
+    
     @Autowired
-    public UserService(WorkflowConfig config, ServiceRequestRepository serviceRequestRepository, ObjectMapper mapper) {
+    public UserService(WorkflowConfig config, RestServiceRequestRepository serviceRequestRepository, ObjectMapper mapper) {
         this.config = config;
         this.serviceRequestRepository = serviceRequestRepository;
         this.mapper = mapper;
@@ -63,7 +65,7 @@ public class UserService {
     public List<String> searchUserUuidsBasedOnRoleCodes(UserSearchRequest userSearchRequest){
         StringBuilder url = new StringBuilder(config.getUserHost());
         url.append(config.getUserSearchEndpoint());
-        UserDetailResponse userDetailResponse = userCall(userSearchRequest,url);
+        UserDetailResponse userDetailResponse = userCall(userSearchRequest, url);
         if(CollectionUtils.isEmpty(userDetailResponse.getUser()))
             throw new CustomException("INVALID USER","No user found for the roleCodes: " + userSearchRequest.getRoleCodes());
         List<String> roleSpecificUsersUuids = new ArrayList<>();
@@ -98,6 +100,16 @@ public class UserService {
             throw new CustomException("IllegalArgumentException","ObjectMapper not able to convertValue in userCall");
         }
     }
+    
+//    public UserDetailResponse userCall(Object userRequest) {
+//        String dobFormat="yyyy-MM-dd";
+//        UserDetailResponse userDetailResponse=null;
+//        
+//    	UserSearchResponse userResponse = userCont.get((org.egov.user.web.contract.UserSearchRequest)userRequest, headers);
+//    	userDetailResponse = transformUserSearchResponseToUserDetailsResponse(userResponse);
+//        
+//        return userDetailResponse;
+//    }
 
 
     /**
@@ -140,7 +152,14 @@ public class UserService {
         return  d.getTime();
     }
 
-
+//    private UserDetailResponse transformUserSearchResponseToUserDetailsResponse(UserSearchResponse userResponse) {
+//		return UserDetailResponse.builder().responseInfo(userResponse.getResponseInfo())
+//				.user(userResponse.getUserSearchResponseContent().stream().map(user -> User.builder().id(user.getId())
+//						.userName(user.getUserName()).name(user.getName()).type(user.getType().toString()).mobileNumber(user.getMobileNumber())
+//						.emailId(user.getEmailId()).tenantId(user.getTenantId()).uuid(user.getUuid())
+//						.roles(user.getRoles().stream().map(role -> Role.builder().code(role.getCode()).tenantId(role.getTenantId()).name(role.getName()).build()).collect(Collectors.toList()))
+//						.build()).collect(Collectors.toList())).build();
+//	}
 
 
 }

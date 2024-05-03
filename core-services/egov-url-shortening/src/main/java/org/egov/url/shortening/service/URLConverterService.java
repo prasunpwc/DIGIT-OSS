@@ -10,6 +10,7 @@ import javax.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.egov.infra.persist.consumer.PersisterMessageListener;
 import org.egov.tracer.model.CustomException;
 import org.egov.url.shortening.model.ShortenRequest;
 import org.egov.url.shortening.producer.Producer;
@@ -63,19 +64,22 @@ public class URLConverterService {
     private ObjectMapper objectMapper;
 
     private RestTemplate restTemplate;
+    
+    @Autowired
+    private PersisterMessageListener persister;
 
-    private Producer producer;
+//    private Producer producer;
 
     @Autowired
     private HashIdConverter hashIdConverter;
 
     @Autowired
-    public URLConverterService(List<URLRepository> urlRepositories, ObjectMapper objectMapper, RestTemplate restTemplate, Producer producer) {
+    public URLConverterService(List<URLRepository> urlRepositories, ObjectMapper objectMapper, RestTemplate restTemplate) {
     	System.out.println(urlRepositories);
     	this.urlRepositories = urlRepositories;   
     	this.objectMapper = objectMapper;
     	this.restTemplate = restTemplate;
-    	this.producer = producer;
+//    	this.producer = producer;
     }
     
     @PostConstruct
@@ -191,7 +195,10 @@ public class URLConverterService {
                 data.put("tag", "Unidentified link");
             }
 
-            producer.push(kafkaTopic,data);
+//            producer.push(kafkaTopic,data);
+            
+            persister.persist(kafkaTopic,data);
+
 
         }
 

@@ -58,7 +58,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 @SpringBootApplication
 @ComponentScan(basePackages = { "org.egov.hrms", "org.egov.hrms.web.controllers" , "org.egov.hrms.config"})
-@Import({TracerConfiguration.class, MultiStateInstanceUtil.class})
+//@Import({TracerConfiguration.class, MultiStateInstanceUtil.class})
+@Import({TracerConfiguration.class})
 public class EgovEmployeeApplication {
 
     @Value("${app.timezone}")
@@ -69,13 +70,13 @@ public class EgovEmployeeApplication {
         TimeZone.setDefault(TimeZone.getTimeZone(timeZone));
     }
 
-    @Bean
-    public ObjectMapper getObjectMapper() {
-        final ObjectMapper objectMapper = new ObjectMapper();
-        objectMapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
-        objectMapper.setTimeZone(TimeZone.getTimeZone(timeZone));
-        return objectMapper;
-    }
+//    @Bean
+//    public ObjectMapper getObjectMapper() {
+//        final ObjectMapper objectMapper = new ObjectMapper();
+//        objectMapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
+//        objectMapper.setTimeZone(TimeZone.getTimeZone(timeZone));
+//        return objectMapper;
+//    }
 
     public static void main(String[] args) {
         SpringApplication.run(EgovEmployeeApplication.class, args);

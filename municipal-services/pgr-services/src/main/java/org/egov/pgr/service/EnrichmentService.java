@@ -1,11 +1,12 @@
 package org.egov.pgr.service;
 
 import org.egov.common.contract.request.RequestInfo;
+import org.egov.id.model.IdResponse;
 import org.egov.pgr.config.PGRConfiguration;
 import org.egov.pgr.repository.IdGenRepository;
 import org.egov.pgr.util.PGRUtils;
 import org.egov.pgr.web.models.*;
-import org.egov.pgr.web.models.Idgen.IdResponse;
+//import org.egov.pgr.web.models.Idgen.IdResponse;
 import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.CollectionUtils;

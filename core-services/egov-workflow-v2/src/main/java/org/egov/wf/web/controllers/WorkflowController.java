@@ -17,6 +17,7 @@ import org.egov.wf.web.models.StatusCountRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -26,50 +27,54 @@ import org.springframework.web.bind.annotation.RestController;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 
-@RestController
-@RequestMapping("/egov-wf")
+//@RestController
+//@RequestMapping("/egov-wf")
+@Component
 public class WorkflowController {
 
+	@Autowired
+    private ObjectMapper objectMapper;
 
-    private final ObjectMapper objectMapper;
+	@Autowired
+    private HttpServletRequest request;
 
-    private final HttpServletRequest request;
+	@Autowired
+    private WorkflowService workflowService;
 
-    private final WorkflowService workflowService;
-
-    private final ResponseInfoFactory responseInfoFactory;
-
-
-    @Autowired
-    public WorkflowController(ObjectMapper objectMapper, HttpServletRequest request,
-                              WorkflowService workflowService, ResponseInfoFactory responseInfoFactory) {
-        this.objectMapper = objectMapper;
-        this.request = request;
-        this.workflowService = workflowService;
-        this.responseInfoFactory = responseInfoFactory;
-    }
+	@Autowired
+    private ResponseInfoFactory wfResponseInfoFactory;
 
 
+//    @Autowired
+//    public WorkflowController(ObjectMapper objectMapper, HttpServletRequest request,
+//                              WorkflowService workflowService, ResponseInfoFactory responseInfoFactory) {
+//        this.objectMapper = objectMapper;
+//        this.request = request;
+//        this.workflowService = workflowService;
+//        this.responseInfoFactory = responseInfoFactory;
+//    }
 
-        @RequestMapping(value="/process/_transition", method = RequestMethod.POST)
-        public ResponseEntity<ProcessInstanceResponse> processTransition(@Valid @RequestBody ProcessInstanceRequest processInstanceRequest) {
+
+
+//        @RequestMapping(value="/process/_transition", method = RequestMethod.POST)
+        public ProcessInstanceResponse processTransition(@Valid ProcessInstanceRequest processInstanceRequest) {
                 List<ProcessInstance> processInstances =  workflowService.transition(processInstanceRequest);
                 ProcessInstanceResponse response = ProcessInstanceResponse.builder().processInstances(processInstances)
-                        .responseInfo(responseInfoFactory.createResponseInfoFromRequestInfo(processInstanceRequest.getRequestInfo(), true))
+                        .responseInfo(wfResponseInfoFactory.createResponseInfoFromRequestInfo(processInstanceRequest.getRequestInfo(), true))
                         .build();
-                return new ResponseEntity<>(response,HttpStatus.OK);
+                return response;
         }
 
 
 
 
-        @RequestMapping(value="/process/_search", method = RequestMethod.POST)
-        public ResponseEntity<ProcessInstanceResponse> search(@Valid @RequestBody RequestInfoWrapper requestInfoWrapper,
-                                                              @Valid @ModelAttribute ProcessInstanceSearchCriteria criteria) {
+//        @RequestMapping(value="/process/_search", method = RequestMethod.POST)
+        public ProcessInstanceResponse search(@Valid RequestInfoWrapper requestInfoWrapper,
+                                                              @Valid ProcessInstanceSearchCriteria criteria) {
         List<ProcessInstance> processInstances = workflowService.search(requestInfoWrapper.getRequestInfo(),criteria);
         Integer count = workflowService.getUserBasedProcessInstancesCount(requestInfoWrapper.getRequestInfo(),criteria);
             ProcessInstanceResponse response  = ProcessInstanceResponse.builder().processInstances(processInstances).totalCount(count).build();
-                return new ResponseEntity<>(response,HttpStatus.OK);
+                return response;
         }
 
     /**
@@ -78,7 +83,7 @@ public class WorkflowController {
      * @param criteria
      * @return
      */
-    @RequestMapping(value="/process/_count", method = RequestMethod.POST)
+//    @RequestMapping(value="/process/_count", method = RequestMethod.POST)
         public ResponseEntity<Integer> count(@Valid @RequestBody RequestInfoWrapper requestInfoWrapper,
                                                               @Valid @ModelAttribute ProcessInstanceSearchCriteria criteria) {
     		criteria.setIsNearingSlaCount(Boolean.FALSE);
@@ -86,7 +91,7 @@ public class WorkflowController {
             return new ResponseEntity<>(count,HttpStatus.OK);
         }
 
-    @RequestMapping(value="/escalate/_search", method = RequestMethod.POST)
+//    @RequestMapping(value="/escalate/_search", method = RequestMethod.POST)
     public ResponseEntity<ProcessInstanceResponse> searchEscalatedApplications(@Valid @RequestBody RequestInfoWrapper requestInfoWrapper,
                                                           @Valid @ModelAttribute ProcessInstanceSearchCriteria criteria) {
         List<ProcessInstance> processInstances = workflowService.escalatedApplicationsSearch(requestInfoWrapper.getRequestInfo(),criteria);
@@ -102,7 +107,7 @@ public class WorkflowController {
      * @param criteria
      * @return
      */
-    @RequestMapping(value = "/process/_statuscount", method = RequestMethod.POST)
+//    @RequestMapping(value = "/process/_statuscount", method = RequestMethod.POST)
     public ResponseEntity<List> StatusCount(@Valid @RequestBody StatusCountRequest statusCountRequest,
             @Valid @ModelAttribute ProcessInstanceSearchCriteria criteria) {
         ProcessInstanceSearchCriteria statusCriteria = statusCountRequest.getProcessInstanceSearchCriteria();
@@ -113,7 +118,7 @@ public class WorkflowController {
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
     
-    @RequestMapping(value="/process/_nearingslacount", method = RequestMethod.POST)
+//    @RequestMapping(value="/process/_nearingslacount", method = RequestMethod.POST)
     public ResponseEntity<Integer> nearingSlaCount(@Valid @RequestBody RequestInfoWrapper requestInfoWrapper,
                                          @Valid @ModelAttribute ProcessInstanceSearchCriteria criteria) {
         criteria.setIsNearingSlaCount(Boolean.TRUE);

@@ -1,4 +1,4 @@
-package org.egov.wf.web.controllers;
+package org.egov.pgr.web.controllers;
 
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -6,24 +6,25 @@ import org.egov.wf.service.BusinessMasterService;
 import org.egov.wf.util.ResponseInfoFactory;
 import org.egov.wf.web.models.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
 import java.util.Map;
 
-//@RestController
-//@RequestMapping("/egov-wf")
-@Component
-public class BusinessServiceController {
+@RestController
+@RequestMapping("/egov-wf")
+public class WfBusinessServiceController {
 
 	@Autowired
+	@Lazy
     private BusinessMasterService businessMasterService;
 
 	@Autowired
+	@Lazy
     private ResponseInfoFactory wfResponseInfoFactory;
 
 	@Autowired
@@ -43,8 +44,8 @@ public class BusinessServiceController {
      * @param businessServiceRequest The BusinessService request for create
      * @return The created object
      */
-//    @RequestMapping(value="/businessservice/_create", method = RequestMethod.POST)
-    public ResponseEntity<BusinessServiceResponse> create(@Valid BusinessServiceRequest businessServiceRequest) {
+    @RequestMapping(value="/businessservice/_create", method = RequestMethod.POST)
+    public ResponseEntity<BusinessServiceResponse> create(@RequestBody @Valid BusinessServiceRequest businessServiceRequest) {
         List<BusinessService> businessServices = businessMasterService.create(businessServiceRequest);
         BusinessServiceResponse response = BusinessServiceResponse.builder().businessServices(businessServices)
                 .responseInfo(wfResponseInfoFactory.createResponseInfoFromRequestInfo(businessServiceRequest.getRequestInfo(),true))
@@ -59,7 +60,7 @@ public class BusinessServiceController {
      * @param requestInfoWrapper The requestInfoWrapper object containing requestInfo
      * @return List of businessServices from db based on search params
      */
-//    @RequestMapping(value="/businessservice/_search", method = RequestMethod.POST)
+    @RequestMapping(value="/businessservice/_search", method = RequestMethod.POST)
     public BusinessServiceResponse search(@Valid BusinessServiceSearchCriteria searchCriteria,
                                                           @Valid RequestInfoWrapper requestInfoWrapper) {
 
@@ -78,8 +79,5 @@ public class BusinessServiceController {
                 .build();
         return new ResponseEntity<>(response,HttpStatus.OK);
     }
-
-
-
 
 }

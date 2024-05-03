@@ -45,7 +45,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.request.Role;
 import org.egov.common.contract.request.User;
-import org.egov.common.utils.MultiStateInstanceUtil;
+//import org.egov.common.contract.request.User;
+//import org.egov.common.utils.MultiStateInstanceUtil;
 import org.egov.hrms.config.PropertiesManager;
 import org.egov.hrms.model.Employee;
 import org.egov.hrms.model.enums.UserType;
@@ -56,17 +57,20 @@ import org.egov.hrms.web.contract.UserResponse;
 import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static org.egov.hrms.utils.HRMSConstants.*;
 
 @Slf4j
-@Service
+@Service("hrmUserService")
 public class UserService {
 
 	@Autowired
@@ -77,9 +81,9 @@ public class UserService {
 
 	@Autowired
 	private RestCallRepository restCallRepository;
-
-	@Autowired
-	private MultiStateInstanceUtil centralInstanceUtil;
+	
+//	@Autowired
+//	private MultiStateInstanceUtil centralInstanceUtil;
 
 	@Value("${egov.user.create.endpoint}")
 	private String userCreateEndpoint;
@@ -196,7 +200,7 @@ public class UserService {
 		//Creating role with INTERNAL_MICROSERVICE_ROLE
 		Role role = Role.builder()
 				.name(INTERNALMICROSERVICEROLE_NAME).code(INTERNALMICROSERVICEROLE_CODE)
-				.tenantId(centralInstanceUtil.getStateLevelTenant(tenantId)).build();
+				.tenantId(tenantId).build();
 
 		//Creating userinfo with uuid and role of internal micro service role
 		User userInfo = User.builder()
@@ -272,6 +276,36 @@ public class UserService {
 		}
 		return  d.getTime();
 	}
+	
+//	private UserResponse transformUpdateResponseToUserDetailResponse(UpdateResponse userResponse) {
+//		 return UserResponse.builder().responseInfo(userResponse.getResponseInfo())
+//				.user(userResponse.getUser().stream().map(user -> org.egov.hrms.web.contract.User.builder().id(user.getId())
+//						.userName(user.getUserName()).name(user.getName()).type(user.getType().toString()).mobileNumber(user.getMobileNumber())
+//						.emailId(user.getEmailId()).tenantId(user.getTenantId()).uuid(user.getUuid()).active(user.getActive())
+//						.roles(user.getRoles().stream().map(role -> org.egov.hrms.model.Role.builder().code(role.getCode()).tenantId(role.getTenantId()).name(role.getName()).build()).collect(Collectors.toList()))
+//						.build()).collect(Collectors.toList())).build();
+//		 
+//	}
+//
+//	private UserResponse transformUserDetailResponseToUserDetailResponse(
+//			org.egov.user.web.contract.UserDetailResponse userResponse) {
+//		return UserResponse.builder().responseInfo(userResponse.getResponseInfo())
+//				.user(userResponse.getUser().stream().map(user -> org.egov.hrms.web.contract.User.builder().id(user.getId())
+//						.userName(user.getUserName()).name(user.getName()).type(user.getType().toString()).mobileNumber(user.getMobileNumber())
+//						.emailId(user.getEmailId()).tenantId(user.getTenantId()).uuid(user.getUuid()).active(user.getActive())
+//						.roles(user.getRoles().stream().map(role -> org.egov.hrms.model.Role.builder().code(role.getCode()).tenantId(role.getTenantId()).name(role.getName()).build()).collect(Collectors.toList()))
+//						.build()).collect(Collectors.toList())).build();
+//		
+//	}
+//
+//	private UserResponse transformUserSearchResponseToUserDetailsResponse(UserSearchResponse userResponse) {
+//		return UserResponse.builder().responseInfo(userResponse.getResponseInfo())
+//				.user(userResponse.getUserSearchResponseContent().stream().map(user -> org.egov.hrms.web.contract.User.builder().id(user.getId())
+//						.userName(user.getUserName()).name(user.getName()).type(user.getType().toString()).mobileNumber(user.getMobileNumber())
+//						.emailId(user.getEmailId()).tenantId(user.getTenantId()).uuid(user.getUuid()).active(user.getActive())
+//						.roles(user.getRoles().stream().map(role -> org.egov.hrms.model.Role.builder().code(role.getCode()).tenantId(role.getTenantId()).name(role.getName()).build()).collect(Collectors.toList()))
+//						.build()).collect(Collectors.toList())).build();
+//	}
 
 
 }

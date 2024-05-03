@@ -17,20 +17,21 @@ import java.util.HashMap;
 public class MigrationConsumer {
 
 
-    @Autowired
+//    @Autowired
     private MigrationService migrationService;
 
     @Autowired
     private ObjectMapper mapper;
 
 
-    @KafkaListener(topics = { "${pgr.kafka.migration.topic}"})
+//    @KafkaListener(topics = { "${pgr.kafka.migration.topic}"})
     public void listen(final HashMap<String, Object> record, @Header(KafkaHeaders.RECEIVED_TOPIC) String topic) {
 
         try {
             log.info("Received migration request " + record);
             ServiceResponse serviceResponse = mapper.convertValue(record,ServiceResponse.class);
-            migrationService.migrate(serviceResponse);
+            // TODO: Currently Commented
+//            migrationService.migrate(serviceResponse);
         }
         catch (Exception e){
             log.error("Error occured while processing the record from topic : " + topic, e);

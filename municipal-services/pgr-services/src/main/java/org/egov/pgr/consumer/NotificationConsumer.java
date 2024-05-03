@@ -6,9 +6,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.egov.pgr.service.NotificationService;
 import org.egov.pgr.web.models.ServiceRequest;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.support.KafkaHeaders;
 import org.springframework.messaging.handler.annotation.Header;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
@@ -18,6 +20,7 @@ import static org.apache.kafka.common.requests.FetchMetadata.log;
 @Service
 @Slf4j
 public class NotificationConsumer {
+	
     @Autowired
     NotificationService notificationService;
 
@@ -32,14 +35,16 @@ public class NotificationConsumer {
      * @param topic
      */
 
-    @KafkaListener(topics = { "${pgr.kafka.create.topic}" ,"${pgr.kafka.update.topic}"})
-    public void listen(final HashMap<String, Object> record, @Header(KafkaHeaders.RECEIVED_TOPIC) String topic) {
+//    @KafkaListener(topics = { "${pgr.kafka.create.topic}" ,"${pgr.kafka.update.topic}"})
+    @Async
+//    public void listen(final HashMap<String, Object> record, @Header(KafkaHeaders.RECEIVED_TOPIC) String topic) {
+    public void listen(ServiceRequest request, String topic) {
         try {
-            ServiceRequest request = mapper.convertValue(record, ServiceRequest.class);
+//            ServiceRequest request = mapper.convertValue(record, ServiceRequest.class);
 
             notificationService.process(request, topic);
         } catch (Exception ex) {
-            StringBuilder builder = new StringBuilder("Error while listening to value: ").append(record)
+            StringBuilder builder = new StringBuilder("Error while listening to value: ").append(request)
                     .append("on topic: ").append(topic);
             log.error(builder.toString(), ex);
         }
